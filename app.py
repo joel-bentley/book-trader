@@ -19,29 +19,55 @@ db = SQLAlchemy(app)
 # @app.before_first_request
 # def create_tables():
 #     db.create_all()
-#
-#
-# oauth = OAuth()
-# twitter = oauth.remote_app(name='twitter',
-#                            base_url='https://api.twitter.com/1/',
-#                            request_token_url='https://api.twitter.com/oauth/request_token',
-#                            access_token_url='https://api.twitter.com/oauth/access_token',
-#                            authorize_url='https://api.twitter.com/oauth/authenticate',
-#                            consumer_key=os.environ['TWITTER_KEY'],
-#                            consumer_secret=os.environ['TWITTER_SECRET']
-#                            )
-#
-#
-# @twitter.tokengetter
-# def get_twitter_token(token=None):
-#     return session.get('twitter_token')
 
 
-class HelloWorld(Resource):
+oauth = OAuth()
+twitter = oauth.remote_app(name='twitter',
+                           base_url='https://api.twitter.com/1/',
+                           request_token_url='https://api.twitter.com/oauth/request_token',
+                           access_token_url='https://api.twitter.com/oauth/access_token',
+                           authorize_url='https://api.twitter.com/oauth/authenticate',
+                           consumer_key=os.environ['TWITTER_KEY'],
+                           consumer_secret=os.environ['TWITTER_SECRET']
+                           )
+
+
+@twitter.tokengetter
+def get_twitter_token(token=None):
+    return session.get('twitter_token')
+
+
+class Profile(Resource):
     def get(self):
-        return {'hello': 'world'}
 
-api.add_resource(HelloWorld, '/api/test')
+        twitter_id = session.get('twitter_id')
+        twitter_name = session.get('twitter_name')
+        # twitter_id = '12345'
+        # twitter_name = 'JoelBentley7'
+        full_name = 'Joel Bentley'
+        location = { 'city': 'Ann Arbor', 'state': 'MI' }
+
+        if twitter_id:
+            return { 'userId': twitter_id,
+                     'username': twitter_name,
+                     'fullName': full_name,
+                     'location': location,
+                     'avatar':
+                        'https://twitter.com/{}/profile_image?size=normal'.format(
+                            twitter_name)
+                   }
+
+        return {'userId': '', 'username': '', 'fullName': '', 'location': '', 'avatar': ''}
+
+
+class Books(Resource):
+    def get(self):
+        return [ {'title': 'A Book', 'image': 'https://placekitten.com/g/160/120'}
+            for __ in range(4) ]
+
+
+api.add_resource(Profile, '/api/profile')
+api.add_resource(Books, '/api/books')
 
 
 @app.route('/')
@@ -76,9 +102,15 @@ def twitter_auth_callback():
     session['twitter_name'] = twitter_name
     session['twitter_id'] = twitter_id
 
-    # user = User.query.filter_by(twitter_name=twitter_name).first()
+    # Twitter id does not change for an account,
+    #   but a user can change name through Twitter.
+    # user = User.query.filter_by(twitter_id=twitter_id).first()
     #
-    # if not user:
+    # if user:
+    #    if user.twitter_name != twitter_name:
+    #        user.twitter_name = twitter_name
+    #        db.session.commit()
+    # else:
     #     new_user = User(twitter_id, twitter_name)
     #     db.session.add(new_user)
     #     db.session.commit()
