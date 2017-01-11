@@ -1,12 +1,13 @@
 import React from 'react'
 import { Match } from 'react-router'
-// import { Button } from 'react-bootstrap'
-// import MatchWhenAuthorized from './components/MatchWhenAuthorized'
+import MatchWhenAuthorized from './components/MatchWhenAuthorized'
 import axios from 'axios'
 
 import NavigationBar from './components/NavigationBar'
 import Intro from './components/Intro'
+import Profile from './components/Profile'
 import Login from './components/Login'
+
 
 const API = '/api'
 const getProfile = () => axios.get(`${API}/profile`)
@@ -56,6 +57,10 @@ class App extends React.Component {
       .catch(err => console.log('error:', err))
   }
 
+  updateProfile = (fullName, location) => {
+    this.setState({ fullName: fullName, location: location })
+  }
+
   handleRequestBook = () => {
 
   }
@@ -70,7 +75,7 @@ class App extends React.Component {
 
   render() {
     const { router } = this.props
-    const { books, displayName, avatar } = this.state
+    const { books, displayName, username, avatar, fullName, location } = this.state
 
     const isAuthenticated = true // displayName !== ''
     const reqNumber = 0  // calculate number of requests on user's books
@@ -90,7 +95,7 @@ class App extends React.Component {
             )
           }}/>
 
-          <Match pattern="/mybooks" render={() => {
+          <MatchWhenAuthorized pattern="/mybooks" {...{isAuthenticated}} render={() => {
             // const myBooksUnlent
             // const myBooksLent    // button to confirm book return
             // const booksBorrowed
@@ -99,13 +104,13 @@ class App extends React.Component {
             )
           }}/>
 
-          <Match pattern="/addbooks" render={() => {
+          <MatchWhenAuthorized pattern="/addbooks" {...{isAuthenticated}} render={() => {
             return (
               <Intro />
             )
           }}/>
 
-          <Match pattern="/requests" render={() => {
+          <MatchWhenAuthorized pattern="/requests" {...{isAuthenticated}} render={() => {
             // const myBooksRequested  // button to confirm (or cancel) request
             return (
               <Intro books={books} />
@@ -113,9 +118,10 @@ class App extends React.Component {
           }}/>
 
 
-          {/* <Match pattern="/profile" render={() => (
-            <Profile {...{ isAuthenticated }} />
-          )}/> */}
+          <MatchWhenAuthorized pattern="/profile" {...{isAuthenticated}} render={() => (
+            <Profile updateProfile={this.updateProfile}
+              {...{ username, avatar, fullName, location }} />
+          )} />
 
           <Match pattern="/login" render={() => (
             <Login {...{ isAuthenticated }} />
