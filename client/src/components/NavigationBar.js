@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import { Glyphicon, Navbar, NavDropdown, MenuItem, Nav, NavItem } from 'react-bootstrap'
 
-const NavigationBar = ({ router, isAuthenticated, displayName, avatar }) => {
+const NavigationBar = ({ router, isAuthenticated, displayName, avatar, reqNumber }) => {
 
   return (
     <Navbar fixedTop>
@@ -28,8 +28,14 @@ const NavigationBar = ({ router, isAuthenticated, displayName, avatar }) => {
             }</Link>
         )}
         {isAuthenticated && (
-            <Link to="/mytrades">{({ href, onClick }) => (
-                <NavItem href={href} onClick={onClick} eventKey={3}> My Trades </NavItem>
+            <Link to="/addbooks">{({ href, onClick }) => (
+                <NavItem href={href} onClick={onClick} eventKey={3}> Add Books </NavItem>
+              )
+            }</Link>
+        )}
+        {isAuthenticated && (
+            <Link to="/requests">{({ href, onClick }) => (
+                <NavItem href={href} onClick={onClick} eventKey={4}> {`Book Requests (${reqNumber})`} </NavItem>
               )
             }</Link>
         )}
@@ -38,13 +44,13 @@ const NavigationBar = ({ router, isAuthenticated, displayName, avatar }) => {
         <Nav pullRight>
 
           {isAuthenticated ? (
-              <NavDropdown title={<span><img src={avatar} role="presentation"/>{displayName}</span>} eventKey={4} id="basic-nav-dropdown">
-                <MenuItem onSelect={() => { router.transitionTo('/profile') }} eventKey={4.1}> Profile </MenuItem>
-                <MenuItem href={`${process.env.PUBLIC_URL}/logout`} eventKey={4.2}> Logout </MenuItem>
+              <NavDropdown title={<span><img src={avatar} role="presentation"/>{displayName}</span>} eventKey={5} id="basic-nav-dropdown">
+                <MenuItem onSelect={() => { router.transitionTo('/profile') }} eventKey={5.1}> Profile </MenuItem>
+                <MenuItem href={`${process.env.PUBLIC_URL}/logout`} eventKey={5.2}> Logout </MenuItem>
               </NavDropdown>
           ) : (
             <Link to="/login">{({ href, onClick }) => (
-                <NavItem href={href} onClick={onClick} eventKey={3}> Login </NavItem>
+                <NavItem href={href} onClick={onClick} eventKey={5}> Login </NavItem>
               )
             }</Link>
           )}
