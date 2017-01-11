@@ -40,10 +40,12 @@ def get_twitter_token(token=None):
 class Profile(Resource):
     def get(self):
 
-        twitter_id = session.get('twitter_id')
-        twitter_name = session.get('twitter_name')
-        # twitter_id = '12345'
-        # twitter_name = 'JoelBentley7'
+        # twitter_id = session.get('twitter_id')
+        # twitter_name = session.get('twitter_name')
+        twitter_id = '948889321'
+        twitter_name = 'JoelBentley7'
+
+        # full_name and location found in Database using UserId
         full_name = 'Joel Bentley'
         location = { 'city': 'Ann Arbor', 'state': 'MI' }
 
@@ -62,8 +64,30 @@ class Profile(Resource):
 
 class Books(Resource):
     def get(self):
-        return [ {'title': 'A Book', 'image': 'https://placekitten.com/g/160/120'}
-            for __ in range(4) ]
+        # owner info found in database from owner['id']
+        userId = '948889321'
+        username = 'JoelBentley7'
+        location = { 'city': 'Ann Arbor', 'state': 'MI' }
+
+        return [ { 'olid': 'OL22549594M',
+                   'title': 'The Hunger Games',
+                   'author': 'Suzanne Collins',
+                   'owner': { 'id': userId, 'username': username, 'location': location },
+                   'requestedBy': '',
+                   'lentTo': '' },
+                 { 'olid': 'OL7318410M',
+                   'title': 'KAFKA ON THE SHORE',
+                   'author': 'Murakami Haruki',
+                   'owner': { 'id': userId, 'username': username, 'location': location },
+                   'requestedBy': '',
+                   'lentTo': '' },
+                 { 'olid': 'OL16159793M',
+                   'title': 'The Name of the Wind',
+                   'author': 'Patrick Rothfuss',
+                   'owner': { 'id': userId, 'username': username, 'location': location },
+                   'requestedBy': '',
+                   'lentTo': '' }
+                ]
 
 
 api.add_resource(Profile, '/api/profile')
