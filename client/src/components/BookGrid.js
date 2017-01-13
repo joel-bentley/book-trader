@@ -16,9 +16,9 @@ class BookGrid extends React.Component {
   }
 
   defaultProps = {
-    handleRequestBook: null,
-    handleConfirmRequest: null,
-    handleReturnBook: null
+    requestBook: null,
+    confirmRequest: null,
+    returnBook: null
   }
 
   componentWillMount() {
@@ -61,7 +61,7 @@ class BookGrid extends React.Component {
 
   render() {
     const { books, isAuthenticated } = this.props
-    const { handleRequestBook, handleConfirmRequest, handleReturnBook } = this.props
+    const { requestBook, confirmRequest, returnBook } = this.props
     const { showModal, bookIndex } = this.state
     const modalBook = books && books[bookIndex]
 
@@ -84,14 +84,14 @@ class BookGrid extends React.Component {
             <div style={{textAlign: 'right'}}>
               <img src={modalBook.image} role="presentation" />
             </div>
-            { handleRequestBook && (
-              <Button onClick={handleRequestBook} bsStyle="primary">Request Book</Button>
+            { requestBook && (
+              <Button onClick={requestBook} bsStyle="primary">Request Book</Button>
             )}
-            { handleConfirmRequest && (
-              <Button onClick={handleConfirmRequest} bsStyle="primary">Confirm Request</Button>
+            { confirmRequest && (
+              <Button onClick={confirmRequest} bsStyle="primary">Confirm Request</Button>
             )}
-            { handleReturnBook && (
-              <Button onClick={handleReturnBook} bsStyle="primary">Return Book</Button>
+            { returnBook && (
+              <Button onClick={returnBook} bsStyle="primary">Return Book</Button>
             )}
           </Modal.Body>
           <Modal.Footer>

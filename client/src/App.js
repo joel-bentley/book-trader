@@ -61,15 +61,15 @@ class App extends React.Component {
     this.setState({ fullName: fullName, location: location })
   }
 
-  handleRequestBook = () => {
+  requestBook = () => {
 
   }
 
-  handleConfirmRequest = () => {
+  confirmRequest = () => {
 
   }
 
-  handleReturnBook = () => {
+  returnBook = () => {
 
   }
 
@@ -90,7 +90,7 @@ class App extends React.Component {
             const availableBooks = books // && books.filter(b => !b.lentTo)
             return (
               <Intro books={availableBooks}
-                     handleRequestBook={this.handleRequestBook}
+                     requestBook={this.requestBook}
                      {...{isAuthenticated}} />
             )
           }}/>
