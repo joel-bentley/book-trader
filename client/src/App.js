@@ -57,8 +57,8 @@ class App extends React.Component {
       .catch(err => console.log('error:', err))
   }
 
-  updateProfile = (fullName, location) => {
-    this.setState({ fullName: fullName, location: location })
+  profileUpdate = newState => {
+    this.setState(newState)
   }
 
   requestBook = () => {
@@ -120,7 +120,7 @@ class App extends React.Component {
 
           <MatchWhenAuthorized pattern="/profile" {...{isAuthenticated}} render={() => (
             <Profile updateProfile={this.updateProfile}
-              {...{ username, avatar, fullName, location }} />
+              {...{ username, avatar, fullName, location }} profileUpdate={this.profileUpdate} />
           )} />
 
           <Match pattern="/login" render={() => (

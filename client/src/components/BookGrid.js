@@ -5,9 +5,6 @@ import Masonry from 'react-masonry-component'
 
 import './BookGrid.css'
 
-const masonryOptions = {
-    transitionDuration: 0
-}
 
 class BookGrid extends React.Component {
   state = {
@@ -67,7 +64,7 @@ class BookGrid extends React.Component {
 
     return (
       <div>
-        <Masonry options={masonryOptions}>
+        <Masonry options={{ transitionDuration: 0 }}>
           {
             books.map((book, index) => (
               <div className="grid-item" onClick={() => this.openModal(index)} key={`book-${index}`}>
@@ -81,22 +78,28 @@ class BookGrid extends React.Component {
           <Modal.Body>
             <h4>{modalBook.title}</h4>
             <p>{modalBook.author}</p>
+            <br />
+            <div>
+              { requestBook && (
+                <Button onClick={requestBook} bsStyle="primary">Request Book</Button>
+              )}
+              { confirmRequest && (
+                <Button onClick={confirmRequest} bsStyle="primary">Confirm Request</Button>
+              )}
+              { returnBook && (
+                <Button onClick={returnBook} bsStyle="primary">Return Book</Button>
+              )}
+            </div>
             <div style={{textAlign: 'right'}}>
               <img src={modalBook.image} role="presentation" />
             </div>
-            { requestBook && (
-              <Button onClick={requestBook} bsStyle="primary">Request Book</Button>
-            )}
-            { confirmRequest && (
-              <Button onClick={confirmRequest} bsStyle="primary">Confirm Request</Button>
-            )}
-            { returnBook && (
-              <Button onClick={returnBook} bsStyle="primary">Return Book</Button>
-            )}
           </Modal.Body>
+          
           <Modal.Footer>
-            <Button onClick={this.prevBook}><Glyphicon glyph="backward" aria-hidden="true" />Prev</Button>
-            <Button onClick={this.nextBook}>Next&nbsp;<Glyphicon glyph="forward" aria-hidden="true" /></Button>
+            <Button onClick={this.prevBook} bsStyle="success"><Glyphicon glyph="backward" aria-hidden="true" />Prev</Button>
+            <Button onClick={this.nextBook} bsStyle="success">Next&nbsp;<Glyphicon glyph="forward" aria-hidden="true" /></Button>
+            &nbsp;
+            <Button onClick={this.closeModal}><Glyphicon glyph="remove" aria-hidden="true" />Close</Button>
           </Modal.Footer>
         </Modal>
       </div>
