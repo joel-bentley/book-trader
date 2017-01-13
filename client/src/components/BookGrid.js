@@ -12,14 +12,17 @@ const masonryOptions = {
 class BookGrid extends React.Component {
   state = {
     showModal: false,
-    bookIndex: 0,
-    numBooks: this.props.books.length
+    bookIndex: 0
   }
 
   defaultProps = {
     handleRequestBook: null,
     handleConfirmRequest: null,
     handleReturnBook: null
+  }
+
+  componentWillMount() {
+    this.numBooks = this.props.books.length
   }
 
   closeModal = () => {
@@ -33,8 +36,8 @@ class BookGrid extends React.Component {
   nextBook = () => {
     this.setState(prevState => {
       const currentIndex = prevState.bookIndex
-      const { numBooks } = this.state
-      const nextIndex =  currentIndex < (numBooks - 1) ? (
+      // const { numBooks } = this.state
+      const nextIndex =  currentIndex < (this.numBooks - 1) ? (
         currentIndex + 1
       ) : (
         0
@@ -46,11 +49,11 @@ class BookGrid extends React.Component {
   prevBook = () => {
     this.setState(prevState => {
       const currentIndex = prevState.bookIndex
-      const { numBooks } = this.state
+      // const { numBooks } = this.state
       const nextIndex =  currentIndex > 0 ? (
         currentIndex - 1
       ) : (
-        numBooks - 1
+        this.numBooks - 1
       )
       return { bookIndex: nextIndex }
     })
