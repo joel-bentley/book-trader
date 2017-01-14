@@ -5,6 +5,7 @@ import axios from 'axios'
 
 import NavigationBar from './components/NavigationBar'
 import Intro from './components/Intro'
+import BookGrid from './components/BookGrid'
 import Profile from './components/Profile'
 import Login from './components/Login'
 
@@ -17,9 +18,9 @@ const searchBooks = text => {
   text = text.replace(/[0-9a-zA-Z$-_.+!*'(),]+/g, '+')
   return axios.get(`https://openlibrary.org/search.json?title=${text}`)
     .then(res => res.docs
-      .filter(book => book.hasOwnProperty('title_suggest')
-                      && book.hasOwnProperty('cover_edition_key')
-                      && book.hasOwnProperty('author_name'))
+      .filter(book => 'title_suggest' in book
+                      && 'author_name' in book
+                      && 'cover_edition_key' in book)
       .map(book => (
       { title: book.title_suggest, author: book.author_name, olid: book.cover_edition_key}
     )))
@@ -34,7 +35,7 @@ class App extends React.Component {
     avatar: '',
     fullName: '',
     location: { city: '', state: ''},
-    books: null
+    books: []
   }
 
   componentDidMount() {
@@ -59,6 +60,15 @@ class App extends React.Component {
 
   profileUpdate = newState => {
     this.setState(newState)
+    // Add server access to update profile in database
+  }
+
+  addBook = () => {
+
+  }
+
+  removeBook = () => {
+
   }
 
   requestBook = () => {
@@ -69,13 +79,17 @@ class App extends React.Component {
 
   }
 
-  returnBook = () => {
+  cancelRequest = () => {
+
+  }
+
+  confirmReturn = () => {
 
   }
 
   render() {
     const { router } = this.props
-    const { books, displayName, username, avatar, fullName, location } = this.state
+    const { books, displayName, userId, username, avatar, fullName, location } = this.state
 
     const isAuthenticated = true // displayName !== ''
     const reqNumber = 0  // calculate number of requests on user's books
@@ -86,34 +100,86 @@ class App extends React.Component {
 
         <div className="container">
 
+
           <Match exactly pattern="/" render={() => {
-            const availableBooks = books // && books.filter(b => !b.lentTo)
+            const availableBooks = books.filter(b => !b.lentTo)
+                                        .filter(b => b.owner.id !== userId)
+
+            if (availableBooks.length === 0) {
+              return (
+                <div className="text-center">
+                  <br /><br />
+                  <p>Sorry, no books are currently available for you to borrow.</p>
+                  <p>Ask your friends to join and add their books!</p>
+                </div>
+              )
+            }
             return (
-              <Intro books={availableBooks}
-                     requestBook={this.requestBook}
-                     {...{isAuthenticated}} />
+              <div>
+                { !isAuthenticated && (
+                  <Intro />
+                )}
+                <BookGrid books={availableBooks} 
+                          requestBook={this.requestBook}
+                          {...{isAuthenticated}} />
+              </div>
             )
           }}/>
 
+
           <MatchWhenAuthorized pattern="/mybooks" {...{isAuthenticated}} render={() => {
-            // const myBooksUnlent
-            // const myBooksLent    // button to confirm book return
-            // const booksBorrowed
+            const myBooks = books.filter(b => b.owner.id === userId)
+            const myUnlentBooks = myBooks.filter(b => !b.lentTo)
+            const myLentBooks = myBooks.filter(b => b.lentTo)
+            const booksBorrowed = books.filter(b => b.lentTo === userId)
+
             return (
-              <Intro books={books} />
+              <div>
+                <h3>My Books (On Shelf)</h3>
+                <br />
+                { myUnlentBooks.length === 0 ? (
+                  <div className="text-center">
+                    <p>No books here</p>
+                  </div>
+                ) : (
+                  <BookGrid books={myUnlentBooks} removeBooks={this.removeBook} />
+                )}
+                <hr />
+                <h3>My Books (Lent Out)</h3>
+                <br />
+                { myLentBooks.length === 0 ? (
+                  <div className="text-center">
+                    <p>No books here</p>
+                  </div>
+                ) : (
+                  <BookGrid books={myLentBooks} confirmReturn={this.confirmReturn} />
+                )}
+                <hr />
+                <h3>Borrowed Books</h3>
+                <br />
+                { booksBorrowed.length === 0 ? (
+                  <div className="text-center">
+                    <p>No books here</p>
+                  </div>
+                ) : (
+                  <BookGrid books={booksBorrowed} />
+                )}
+              </div>
             )
           }}/>
+
 
           <MatchWhenAuthorized pattern="/addbooks" {...{isAuthenticated}} render={() => {
             return (
-              <Intro />
+              <div></div>
             )
           }}/>
+
 
           <MatchWhenAuthorized pattern="/requests" {...{isAuthenticated}} render={() => {
             // const myBooksRequested  // button to confirm (or cancel) request
             return (
-              <Intro books={books} />
+              <div></div>
             )
           }}/>
 
@@ -122,6 +188,7 @@ class App extends React.Component {
             <Profile updateProfile={this.updateProfile}
               {...{ username, avatar, fullName, location }} profileUpdate={this.profileUpdate} />
           )} />
+
 
           <Match pattern="/login" render={() => (
             <Login {...{ isAuthenticated }} />

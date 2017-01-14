@@ -13,9 +13,13 @@ class BookGrid extends React.Component {
   }
 
   defaultProps = {
+    isAuthenticated: false,
+    addBook: null,
+    removeBook: null,
     requestBook: null,
     confirmRequest: null,
-    returnBook: null
+    cancelRequest: null,
+    confirmReturn: null
   }
 
   componentWillMount() {
@@ -33,7 +37,6 @@ class BookGrid extends React.Component {
   nextBook = () => {
     this.setState(prevState => {
       const currentIndex = prevState.bookIndex
-      // const { numBooks } = this.state
       const nextIndex =  currentIndex < (this.numBooks - 1) ? (
         currentIndex + 1
       ) : (
@@ -46,7 +49,6 @@ class BookGrid extends React.Component {
   prevBook = () => {
     this.setState(prevState => {
       const currentIndex = prevState.bookIndex
-      // const { numBooks } = this.state
       const nextIndex =  currentIndex > 0 ? (
         currentIndex - 1
       ) : (
@@ -58,7 +60,7 @@ class BookGrid extends React.Component {
 
   render() {
     const { books, isAuthenticated } = this.props
-    const { requestBook, confirmRequest, returnBook } = this.props
+    const { addBook, removeBook, requestBook, confirmRequest, cancelRequest, confirmReturn } = this.props
     const { showModal, bookIndex } = this.state
     const modalBook = books && books[bookIndex]
 
@@ -79,22 +81,36 @@ class BookGrid extends React.Component {
             <h4>{modalBook.title}</h4>
             <p>{modalBook.author}</p>
             <br />
-            <div>
-              { requestBook && (
+
+            { addBook && (
+              <Button onClick={addBook} bsStyle="primary">Add Book</Button>
+            )}
+            { removeBook && (
+              <Button onClick={removeBook} bsStyle="primary">Remove Book</Button>
+            )}
+            { confirmRequest && (
+              <Button onClick={confirmRequest} bsStyle="primary">Confirm Request</Button>
+            )}
+            { cancelRequest && (
+              <Button onClick={cancelRequest} bsStyle="primary">Cancel Request</Button>
+            )}
+            { confirmReturn && (
+              <Button onClick={confirmReturn} bsStyle="primary">Confirm Book Return</Button>
+            )}
+
+            { requestBook && (
+              isAuthenticated ? (
                 <Button onClick={requestBook} bsStyle="primary">Request Book</Button>
-              )}
-              { confirmRequest && (
-                <Button onClick={confirmRequest} bsStyle="primary">Confirm Request</Button>
-              )}
-              { returnBook && (
-                <Button onClick={returnBook} bsStyle="primary">Return Book</Button>
-              )}
-            </div>
+              ) : (
+                <Button disabled bsStyle="primary">Log in to Request Book</Button>
+              )
+            )}
+
             <div style={{textAlign: 'right'}}>
               <img src={modalBook.image} role="presentation" />
             </div>
           </Modal.Body>
-          
+
           <Modal.Footer>
             <Button onClick={this.prevBook} bsStyle="success"><Glyphicon glyph="backward" aria-hidden="true" />Prev</Button>
             <Button onClick={this.nextBook} bsStyle="success">Next&nbsp;<Glyphicon glyph="forward" aria-hidden="true" /></Button>

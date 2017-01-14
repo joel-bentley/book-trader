@@ -1,9 +1,7 @@
 import React from 'react'
 import { Jumbotron } from 'react-bootstrap'
 
-import BookGrid from './BookGrid'
-
-const Intro = ({ books, isAuthenticated, requestBook }) => (
+const Intro = () => (
   <div>
     <Jumbotron style={{ paddingTop: '5px', paddingBottom: '30px', backgroundColor: '#eee' }}>
       <h1>Book Trader</h1>
@@ -16,11 +14,6 @@ const Intro = ({ books, isAuthenticated, requestBook }) => (
     </div>
     <br />
     <hr />
-    {
-      books && (
-        <BookGrid {...{ books, isAuthenticated, requestBook }} />
-      )
-    }
   </div>
 )
 
