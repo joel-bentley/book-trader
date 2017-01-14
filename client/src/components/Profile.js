@@ -12,10 +12,6 @@ class Profile extends React.Component {
     stateInput: !this.props.location.state
   }
 
-  handleEditIconClick = inputName => {
-
-  }
-
   render() {
     const { username, avatar, fullName, location, profileUpdate } = this.props
     const { fullNameInput, cityInput, stateInput } = this.state
