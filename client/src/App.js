@@ -131,6 +131,7 @@ class App extends React.Component {
             const myBooks = books.filter(b => b.owner.id === userId)
             const myUnlentBooks = myBooks.filter(b => !b.lentTo)
             const myLentBooks = myBooks.filter(b => b.lentTo)
+            const requestedBooks = books.filter(b => b.requestedBy === userId)
             const booksBorrowed = books.filter(b => b.lentTo === userId)
 
             return (
@@ -153,6 +154,16 @@ class App extends React.Component {
                   </div>
                 ) : (
                   <BookGrid books={myLentBooks} confirmReturn={this.confirmReturn} />
+                )}
+                <hr />
+                <h3>Requested Books</h3>
+                <br />
+                { requestedBooks.length === 0 ? (
+                  <div className="text-center">
+                    <p>No books here</p>
+                  </div>
+                ) : (
+                  <BookGrid books={requestedBooks} cancelRequest={this.cancelRequest} />
                 )}
                 <hr />
                 <h3>Borrowed Books</h3>
