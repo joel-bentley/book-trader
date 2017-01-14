@@ -49,7 +49,7 @@ class Profile extends React.Component {
           cityInput ? (
             <ControlledInput
               placeholder=""
-              onSubmit={newCity => profileUpdate({location: {city: newCity}})}
+              onSubmit={newCity => profileUpdate({location: {city: newCity, state: location.state}})}
               inputValue={location.city}
               buttonText="Enter"
             />
@@ -67,7 +67,7 @@ class Profile extends React.Component {
           stateInput ? (
             <ControlledInput
               placeholder=""
-              onSubmit={newState => profileUpdate({location: {state: newState}})}
+              onSubmit={newState => profileUpdate({location: {city: location.city, state: newState}})}
               inputValue={location.state}
               buttonText="Enter"
             />
