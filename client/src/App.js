@@ -1,5 +1,6 @@
 import React from 'react'
 import { Match } from 'react-router'
+import { Alert } from 'react-bootstrap'
 import MatchWhenAuthorized from './components/MatchWhenAuthorized'
 import axios from 'axios'
 
@@ -8,23 +9,12 @@ import Intro from './components/Intro'
 import BookGrid from './components/BookGrid'
 import Profile from './components/Profile'
 import Login from './components/Login'
-
+import AddBooks from './components/AddBooks'
 
 const API = '/api'
 const getProfile = () => axios.get(`${API}/profile`)
 const getBooks = () => axios.get(`${API}/books`)
 
-const searchBooks = text => {
-  text = text.replace(/[0-9a-zA-Z$-_.+!*'(),]+/g, '+')
-  return axios.get(`https://openlibrary.org/search.json?title=${text}`)
-    .then(res => res.docs
-      .filter(book => 'title_suggest' in book
-                      && 'author_name' in book
-                      && 'cover_edition_key' in book)
-      .map(book => (
-      { title: book.title_suggest, author: book.author_name, olid: book.cover_edition_key}
-    )))
-}
 
 class App extends React.Component {
 
@@ -35,11 +25,16 @@ class App extends React.Component {
     avatar: '',
     fullName: '',
     location: { city: '', state: ''},
-    books: []
+    books: [],
+    alertMessage: ''
   }
 
   componentDidMount() {
     this.getData()
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.alertTimeoutId)
   }
 
   getData = () => {
@@ -60,18 +55,31 @@ class App extends React.Component {
 
   profileUpdate = newState => {
     this.setState(newState)
-    // Add server access to update profile in database
   }
 
-  addBook = () => {
-
+  showAlert = message => {
+    this.setState({ alertMessage: message},
+      () => {
+        console.log({message})
+        this.alertTimeoutId = setTimeout(() => this.setState({alertMessage: ''}), 5000)
+      })
   }
 
-  removeBook = () => {
-
+  addBook = (newBook, cb) => {
+    const obj = {
+      owner: { id: this.state.userId },
+      requestedBy: '',
+      lentTo: '' }
+    newBook = Object.assign(newBook, obj)
+    this.setState({ books: [...this.state.books, newBook] },
+      this.showAlert(newBook.title + ' added.'))
   }
 
-  requestBook = () => {
+  removeBook = book => {
+    this.setState({ books: this.state.books.filter(b => b.olid !== book.olid)})
+  }
+
+  requestBook = book => {
 
   }
 
@@ -89,7 +97,7 @@ class App extends React.Component {
 
   render() {
     const { router } = this.props
-    const { books, displayName, userId, username, avatar, fullName, location } = this.state
+    const { alertMessage, books, displayName, userId, username, avatar, fullName, location } = this.state
 
     const isAuthenticated = true // displayName !== ''
     const reqNumber = 0  // calculate number of requests on user's books
@@ -99,7 +107,11 @@ class App extends React.Component {
         <NavigationBar {...{ router, isAuthenticated, displayName, avatar, reqNumber }} />
 
         <div className="container">
-
+          {alertMessage && (
+            <Alert bsStyle="success">
+              <strong>{alertMessage}</strong>
+            </Alert>
+          )}
 
           <Match exactly pattern="/" render={() => {
             const availableBooks = books.filter(b => !b.lentTo)
@@ -182,7 +194,7 @@ class App extends React.Component {
 
           <MatchWhenAuthorized pattern="/addbooks" {...{isAuthenticated}} render={() => {
             return (
-              <div></div>
+              <AddBooks addBook={this.addBook} />
             )
           }}/>
 

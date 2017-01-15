@@ -79,28 +79,29 @@ class BookGrid extends React.Component {
         <Modal show={showModal} onHide={this.closeModal}>
           <Modal.Body>
             <h4>{modalBook.title}</h4>
+            <h5>{modalBook.subtitle}</h5>
             <p>{modalBook.author}</p>
             <br />
 
             { addBook && (
-              <Button onClick={addBook} bsStyle="primary">Add Book</Button>
+              <Button onClick={() => addBook(modalBook)} bsStyle="primary">Add Book</Button>
             )}
             { removeBook && (
-              <Button onClick={removeBook} bsStyle="primary">Remove Book</Button>
+              <Button onClick={() => removeBook(modalBook)} bsStyle="primary">Remove Book</Button>
             )}
             { confirmRequest && (
-              <Button onClick={confirmRequest} bsStyle="primary">Confirm Request</Button>
+              <Button onClick={() => confirmRequest(modalBook)} bsStyle="primary">Confirm Request</Button>
             )}
             { cancelRequest && (
-              <Button onClick={cancelRequest} bsStyle="primary">Cancel Request</Button>
+              <Button onClick={() => cancelRequest(modalBook)} bsStyle="primary">Cancel Request</Button>
             )}
             { confirmReturn && (
-              <Button onClick={confirmReturn} bsStyle="primary">Confirm Book Return</Button>
+              <Button onClick={() => confirmReturn(modalBook)} bsStyle="primary">Confirm Book Return</Button>
             )}
 
             { requestBook && (
               isAuthenticated ? (
-                <Button onClick={requestBook} bsStyle="primary">Request Book</Button>
+                <Button onClick={() => requestBook(modalBook)} bsStyle="primary">Request Book</Button>
               ) : (
                 <Button disabled bsStyle="primary">Log in to Request Book</Button>
               )
