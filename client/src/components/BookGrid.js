@@ -67,7 +67,7 @@ class BookGrid extends React.Component {
                 <div
                   className="grid-item"
                   onClick={() => this.openModal(index)}
-                  key={`book-${index}`}
+                  key={`book-${book.olid}`}
                 >
                   <img src={book.image} role="presentation" />
                 </div>
@@ -80,75 +80,55 @@ class BookGrid extends React.Component {
             <h5>{modalBook.subtitle}</h5>
             <p>{modalBook.author}</p>
             <br />
-            {
-              addBook &&
-                (
+            {addBook && (
                   <Button onClick={() => addBook(modalBook)} bsStyle="primary">
                     Add Book
                   </Button>
-                )
-            }
-            {
-              removeBook &&
-                (
+                )}
+            {removeBook && (
                   <Button
                     onClick={() => removeBook(modalBook)}
                     bsStyle="primary"
                   >
                     Remove Book
                   </Button>
-                )
-            }
-            {
-              confirmRequest &&
-                (
+                )}
+            {confirmRequest && (
                   <Button
                     onClick={() => confirmRequest(modalBook)}
                     bsStyle="primary"
                   >
                     Confirm Request
                   </Button>
-                )
-            }
-            {
-              cancelRequest &&
-                (
+                )}
+            {cancelRequest && (
                   <Button
                     onClick={() => cancelRequest(modalBook)}
                     bsStyle="primary"
                   >
                     Cancel Request
                   </Button>
-                )
-            }
-            {
-              confirmReturn &&
-                (
+                )}
+            {confirmReturn && (
                   <Button
                     onClick={() => confirmReturn(modalBook)}
                     bsStyle="primary"
                   >
                     Confirm Book Return
                   </Button>
-                )
-            }
-            {
-              requestBook &&
-                (isAuthenticated
-                  ? (
+                )}
+            {requestBook && (isAuthenticated ? (
                     <Button
                       onClick={() => requestBook(modalBook)}
                       bsStyle="primary"
                     >
                       Request Book
                     </Button>
-                  )
-                  : (
+                  ) : (
                     <Button disabled bsStyle="primary">
                       Log in to Request Book
                     </Button>
-                  ))
-            }
+                  ))}
             <div style={{ textAlign: 'right' }}>
               <img src={modalBook.image} role="presentation" />
             </div>
@@ -158,7 +138,7 @@ class BookGrid extends React.Component {
               <Glyphicon glyph="backward" aria-hidden="true" />Prev
             </Button>
             <Button onClick={this.nextBook} bsStyle="success">
-              Next <Glyphicon glyph="forward" aria-hidden="true" />
+               Next <Glyphicon glyph="forward" aria-hidden="true" />
             </Button>
             <Button onClick={this.closeModal}>
               <Glyphicon glyph="remove" aria-hidden="true" />Close

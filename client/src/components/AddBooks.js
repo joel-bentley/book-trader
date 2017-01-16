@@ -7,16 +7,18 @@ import BookGrid from './BookGrid';
 
 const searchBooks = searchText => {
   searchText = searchText.replace(/[^0-9a-zA-Z$-_.+!*'(),]+/g, '+');
+
   console.log({ searchText });
+
   return axios
-    .get(`https://openlibrary.org/search.json?title=${searchText}&limit=10`)
+    .get(`https://openlibrary.org/search.json?q=${searchText}&limit=10`)
     .then(res => {
       return res.data.docs
-        .filter(
-          book =>
-            'title_suggest' in book && 'author_name' in book &&
-              'cover_edition_key' in book,
-        )
+        .filter(book => {
+          return book.hasOwnProperty('title_suggest') &&
+            book.hasOwnProperty('author_name') &&
+            book.hasOwnProperty('cover_edition_key');
+        })
         .map(book => {
           return {
             title: book.title_suggest,
