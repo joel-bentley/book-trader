@@ -70,26 +70,29 @@ class Books(Resource):
         username = 'Tester'
         location = {'city': 'Ann Arbor', 'state': 'MI'}
 
-        return [{'olid': 'OL22549594M',
+        return [{'id': 'QGhkQ',
+                 'olid': 'OL22549594M',
                  'title': 'The Hunger Games',
                  'subtitle': '',
                  'author': 'Suzanne Collins',
                  'owner': {'id': user_id, 'username': username, 'location': location},
-                 'requestedBy': '',
+                 'requestedBy': [],
                  'lentTo': ''},
-                {'olid': 'OL7318410M',
+                {'id': 'bbd2j',
+                 'olid': 'OL7318410M',
                  'title': 'KAFKA ON THE SHORE',
                  'subtitle': '',
                  'author': 'Murakami Haruki',
                  'owner': {'id': user_id, 'username': username, 'location': location},
-                 'requestedBy': '',
+                 'requestedBy': [],
                  'lentTo': ''},
-                {'olid': 'OL16159793M',
+                {'id': '4n7Vz',
+                 'olid': 'OL16159793M',
                  'title': 'The Name of the Wind',
                  'subtitle': '',
                  'author': 'Patrick Rothfuss',
                  'owner': {'id': '948889321', 'username': 'JoelBentley7', 'location': location},
-                 'requestedBy': '',
+                 'requestedBy': [],
                  'lentTo': ''}]
 
 

@@ -15,6 +15,16 @@ const API = '/api';
 const getProfile = () => axios.get(`${API}/profile`);
 const getBooks = () => axios.get(`${API}/books`);
 
+const BOOK_ID_LENGTH = 5;
+const BOOK_ID_CHAR = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789';
+
+const generateRandomId = (length, characters) => {
+  return Array
+    .from({ length })
+    .map(() => characters[Math.floor(Math.random() * characters.length)])
+    .join('');
+};
+
 class App extends React.Component {
   state = {
     userId: '',
@@ -74,6 +84,7 @@ class App extends React.Component {
 
   addBook = newBook => {
     const moreProps = {
+      id: generateRandomId(BOOK_ID_LENGTH, BOOK_ID_CHAR),
       owner: { id: this.state.userId },
       requestedBy: '',
       lentTo: '',
@@ -89,12 +100,24 @@ class App extends React.Component {
 
   removeBook = book => {
     this.setState(
-      { books: this.state.books.filter(b => b.olid !== book.olid) },
+      { books: this.state.books.filter(b => b.id !== book.id) },
       this.showAlert(`"${book.title}" by ${book.author} removed.`),
     );
   };
 
-  requestBook = book => {};
+  requestBook = book => {
+    // for this need to first have server database confirm book is available and update database
+    const newBooks = this.state.books.map(b => {
+      if (b.id === book.id) {
+        b.requestedBy.push(this.state.userId);
+      }
+      return b;
+    });
+    this.setState(
+      { books: newBooks },
+      this.showAlert(`"${book.title}" by ${book.author} requested.`),
+    );
+  };
 
   confirmRequest = () => {};
 
