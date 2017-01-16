@@ -107,9 +107,10 @@ class App extends React.Component {
 
   requestBook = book => {
     // for this need to first have server database confirm book is available and update database
-    const newBooks = this.state.books.map(b => {
-      if (b.id === book.id) {
-        b.requestedBy.push(this.state.userId);
+    const { books, userId } = this.state;
+    const newBooks = books.map(b => {
+      if (b.id === book.id && b.requestedBy.indexOf(userId) === -1) {
+        b.requestedBy.push(userId);
       }
       return b;
     });
@@ -121,7 +122,19 @@ class App extends React.Component {
 
   confirmRequest = () => {};
 
-  cancelRequest = () => {};
+  cancelRequest = (book, userId = this.state.userId) => {
+    const { books } = this.state;
+    const newBooks = books.map(b => {
+      if (b.id === book.id) {
+        b.requestedBy = b.requestedBy.filter(u => u !== userId);
+      }
+      return b;
+    });
+    this.setState(
+      { books: newBooks },
+      this.showAlert(`"${book.title}" by ${book.author} request canceled.`),
+    );
+  };
 
   confirmReturn = () => {};
 
@@ -189,7 +202,7 @@ class App extends React.Component {
                 const myUnlentBooks = myBooks.filter(b => !b.lentTo);
                 const myLentBooks = myBooks.filter(b => b.lentTo);
                 const requestedBooks = books.filter(
-                  b => b.requestedBy === userId,
+                  b => b.requestedBy.indexOf(userId) !== -1,
                 );
                 const booksBorrowed = books.filter(b => b.lentTo === userId);
 
@@ -202,6 +215,14 @@ class App extends React.Component {
                             <p>No books here</p>
                           </div>
                         ) : <BookGrid books={myUnlentBooks} removeBook={this.removeBook} />}
+                    <hr />
+                    <h3>Borrowed Books</h3>
+                    <br />
+                    {booksBorrowed.length === 0 ? (
+                          <div className="text-center">
+                            <p>No books here</p>
+                          </div>
+                        ) : <BookGrid books={booksBorrowed} />}
                     <hr />
                     <h3>My Books (Lent Out)</h3>
                     <br />
@@ -218,14 +239,6 @@ class App extends React.Component {
                             <p>No books here</p>
                           </div>
                         ) : <BookGrid books={requestedBooks} cancelRequest={this.cancelRequest} />}
-                    <hr />
-                    <h3>Borrowed Books</h3>
-                    <br />
-                    {booksBorrowed.length === 0 ? (
-                          <div className="text-center">
-                            <p>No books here</p>
-                          </div>
-                        ) : <BookGrid books={booksBorrowed} />}
                   </div>
                 );
               }}
