@@ -81,7 +81,9 @@ class App extends React.Component {
     newBook = { ...newBook, ...moreProps };
     this.setState(
       { books: [ ...this.state.books, newBook ] },
-      this.showAlert(newBook.title + ' added.'),
+      this.showAlert(
+        `"${newBook.title}" by ${newBook.author} added to your library.`,
+      ),
     );
   };
 
@@ -122,10 +124,14 @@ class App extends React.Component {
           {...{ router, isAuthenticated, displayName, avatar, reqNumber }}
         />
         <div className="container">
-          {alertMessage && (
-                <Alert bsStyle="success">
-                  <strong>{alertMessage}</strong>
-                </Alert>
+          {isAuthenticated && (
+                <div>
+                  {alertMessage ? (
+                        <Alert bsStyle="success">
+                          <strong>{alertMessage}</strong>
+                        </Alert>
+                      ) : <div style={{ height: '69px' }}></div>}
+                </div>
               )}
           <Match
             exactly
@@ -135,25 +141,18 @@ class App extends React.Component {
                   .filter(b => !b.lentTo)
                   .filter(b => b.owner.id !== userId);
 
-                if (availableBooks.length === 0) {
-                  return (
-                    <div className="text-center">
-                      <br /><br />
-                      <p>
-                        Sorry, no books are currently available for you to borrow.
-                      </p>
-                      <p>Ask your friends to join and add their books!</p>
-                    </div>
-                  );
-                }
                 return (
                   <div>
                     {!isAuthenticated && <Intro />}
-                    <BookGrid
-                      books={availableBooks}
-                      requestBook={this.requestBook}
-                      {...{ isAuthenticated }}
-                    />
+                    {availableBooks.length === 0 ? (
+                          <div className="text-center">
+                            <br />
+                            <p>
+                              Sorry, no books are currently available for you to borrow.
+                            </p>
+                            <p>Ask your friends to join and add their books!</p>
+                          </div>
+                        ) : <BookGrid books={availableBooks} requestBook={this.requestBook} {...{ isAuthenticated }} />}
                   </div>
                 );
               }}

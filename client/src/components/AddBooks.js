@@ -11,7 +11,7 @@ const searchBooks = searchText => {
   console.log({ searchText });
 
   return axios
-    .get(`https://openlibrary.org/search.json?q=${searchText}&limit=10`)
+    .get(`https://openlibrary.org/search.json?title=${searchText}&limit=10`)
     .then(res => {
       return res.data.docs
         .filter(book => {
