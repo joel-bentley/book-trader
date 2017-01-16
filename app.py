@@ -66,7 +66,7 @@ class Books(Resource):
     def get(self):
         """GET /api/books - Request book listing."""
         # owner info found in database from owner['id']
-        user_id = '948889321'
+        user_id = '000'
         username = 'Tester'
         location = {'city': 'Ann Arbor', 'state': 'MI'}
 
