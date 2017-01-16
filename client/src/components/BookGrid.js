@@ -22,6 +22,10 @@ class BookGrid extends React.Component {
     this.numBooks = this.props.books.length;
   }
 
+  componentWillReceiveProps() {
+    this.closeModal();
+  }
+
   closeModal = () => {
     this.setState({ showModal: false });
   };
