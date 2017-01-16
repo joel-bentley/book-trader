@@ -82,15 +82,16 @@ class App extends React.Component {
     this.setState(
       { books: [ ...this.state.books, newBook ] },
       this.showAlert(
-        `"${newBook.title}" by ${newBook.author} added to your library.`,
+        `"${newBook.title}" by ${newBook.author} added to 'My Books'.`,
       ),
     );
   };
 
   removeBook = book => {
-    this.setState({
-      books: this.state.books.filter(b => b.olid !== book.olid),
-    });
+    this.setState(
+      { books: this.state.books.filter(b => b.olid !== book.olid) },
+      this.showAlert(`"${book.title}" by ${book.author} removed.`),
+    );
   };
 
   requestBook = book => {};
@@ -177,7 +178,7 @@ class App extends React.Component {
                           <div className="text-center">
                             <p>No books here</p>
                           </div>
-                        ) : <BookGrid books={myUnlentBooks} removeBooks={this.removeBook} />}
+                        ) : <BookGrid books={myUnlentBooks} removeBook={this.removeBook} />}
                     <hr />
                     <h3>My Books (Lent Out)</h3>
                     <br />
