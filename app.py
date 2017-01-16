@@ -38,6 +38,7 @@ def get_twitter_token(token=None):
 
 
 class Profile(Resource):
+
     def get(self):
 
         # twitter_id = session.get('twitter_id')
@@ -45,52 +46,51 @@ class Profile(Resource):
         twitter_id = '948889321'
         twitter_name = 'JoelBentley7'
 
-        # full_name and location found in Database using UserId
+        # full_name and location found in Database using user_id
         full_name = 'Joel Bentley'
-        location = { 'city': 'Ann Arbor', 'state': 'MI' }
+        location = {'city': 'Ann Arbor', 'state': 'MI'}
 
         if twitter_id:
-            return { 'userId': twitter_id,
-                     'username': twitter_name,
-                     'fullName': full_name,
-                     'location': location,
-                     'avatar':
-                        'https://twitter.com/{}/profile_image?size=normal'.format(
-                            twitter_name)
-                   }
+            return {'userId': twitter_id,
+                    'username': twitter_name,
+                    'fullName': full_name,
+                    'location': location,
+                    'avatar':
+                    'https://twitter.com/{}/profile_image?size=normal'.format(twitter_name)}
 
         return {'userId': '', 'username': '', 'fullName': '', 'location': '', 'avatar': ''}
 
 
 class Books(Resource):
-    def get(self):
-        # owner info found in database from owner['id']
-        userId = '948889321'
-        username = 'JoelBentley7'
-        location = { 'city': 'Ann Arbor', 'state': 'MI' }
 
-        return [ { 'olid': 'OL22549594M',
-                   'title': 'The Hunger Games',
-                   'subtitle': '',
-                   'author': 'Suzanne Collins',
-                   'owner': { 'id': userId, 'username': username, 'location': location },
-                   'requestedBy': '',
-                   'lentTo': '' },
-                 { 'olid': 'OL7318410M',
-                   'title': 'KAFKA ON THE SHORE',
-                   'subtitle': '',
-                   'author': 'Murakami Haruki',
-                   'owner': { 'id': userId, 'username': username, 'location': location },
-                   'requestedBy': '',
-                   'lentTo': '' },
-                 { 'olid': 'OL16159793M',
-                   'title': 'The Name of the Wind',
-                   'subtitle': '',
-                   'author': 'Patrick Rothfuss',
-                   'owner': { 'id': userId, 'username': username, 'location': location },
-                   'requestedBy': '',
-                   'lentTo': '' }
-                ]
+    def get(self):
+        """GET /api/books - Request book listing."""
+        # owner info found in database from owner['id']
+        user_id = '948889321'
+        username = 'Tester'
+        location = {'city': 'Ann Arbor', 'state': 'MI'}
+
+        return [{'olid': 'OL22549594M',
+                 'title': 'The Hunger Games',
+                 'subtitle': '',
+                 'author': 'Suzanne Collins',
+                 'owner': {'id': user_id, 'username': username, 'location': location},
+                 'requestedBy': '',
+                 'lentTo': ''},
+                {'olid': 'OL7318410M',
+                 'title': 'KAFKA ON THE SHORE',
+                 'subtitle': '',
+                 'author': 'Murakami Haruki',
+                 'owner': {'id': user_id, 'username': username, 'location': location},
+                 'requestedBy': '',
+                 'lentTo': ''},
+                {'olid': 'OL16159793M',
+                 'title': 'The Name of the Wind',
+                 'subtitle': '',
+                 'author': 'Patrick Rothfuss',
+                 'owner': {'id': '948889321', 'username': 'JoelBentley7', 'location': location},
+                 'requestedBy': '',
+                 'lentTo': ''}]
 
 
 api.add_resource(Profile, '/api/profile')
@@ -99,6 +99,7 @@ api.add_resource(Books, '/api/books')
 
 @app.route('/')
 def home():
+    """Route for html file with single page React app."""
     return send_from_directory(app.static_folder, 'index.html')
 
 
@@ -147,6 +148,7 @@ def twitter_auth_callback():
 
 @app.route('/logout')
 def logout():
+    """Logout by removing session keys."""
     session.pop('twitter_name', None)
     session.pop('twitter_id', None)
     session.pop('twitter_token', None)
