@@ -22,12 +22,9 @@ class BookGrid extends React.Component {
     this.numBooks = this.props.books.length;
   }
 
-  componentWillReceiveProps() {
-    this.closeModal();
-  }
-
-  closeModal = () => {
+  closeModal = callback => {
     this.setState({ showModal: false });
+    callback();
   };
 
   openModal = index => {
@@ -99,7 +96,9 @@ class BookGrid extends React.Component {
                 )}
             {confirmRequest && (
                   <Button
-                    onClick={() => confirmRequest(modalBook)}
+                    onClick={
+                      () => this.closeModal(() => confirmRequest(modalBook))
+                    }
                     bsStyle="primary"
                   >
                     Confirm Request
@@ -107,7 +106,9 @@ class BookGrid extends React.Component {
                 )}
             {cancelRequest && (
                   <Button
-                    onClick={() => cancelRequest(modalBook)}
+                    onClick={
+                      () => this.closeModal(() => cancelRequest(modalBook))
+                    }
                     bsStyle="primary"
                   >
                     Cancel Request
@@ -115,7 +116,9 @@ class BookGrid extends React.Component {
                 )}
             {confirmReturn && (
                   <Button
-                    onClick={() => confirmReturn(modalBook)}
+                    onClick={
+                      () => this.closeModal(() => confirmReturn(modalBook))
+                    }
                     bsStyle="primary"
                   >
                     Confirm Book Return
@@ -123,7 +126,9 @@ class BookGrid extends React.Component {
                 )}
             {requestBook && (isAuthenticated ? (
                     <Button
-                      onClick={() => requestBook(modalBook)}
+                      onClick={
+                        () => this.closeModal(() => requestBook(modalBook))
+                      }
                       bsStyle="primary"
                     >
                       Request Book
