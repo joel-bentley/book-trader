@@ -24,7 +24,7 @@ class BookGrid extends React.Component {
 
   closeModal = callback => {
     this.setState({ showModal: false });
-    callback();
+    callback && callback();
   };
 
   openModal = index => {

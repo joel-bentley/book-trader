@@ -128,11 +128,16 @@ class App extends React.Component {
     );
   };
 
-  confirmRequest = (book, userId) => {
+  confirmRequest = book => {
     const { books } = this.state;
+    const requester = book.requestedBy[0];
+
     const newBooks = books.map(b => {
-      if (b.id === book.id) {
-        b.lentTo = { id: userId };
+      if (
+        b.id === book.id &&
+          b.requestedBy.filter(r => r.id === requester.id).length
+      ) {
+        b.lentTo = requester;
         b.requestedBy = [];
       }
       return b;
@@ -151,7 +156,10 @@ class App extends React.Component {
       : this.state.userId;
 
     const newBooks = books.map(b => {
-      if (b.id === book.id) {
+      if (
+        b.id === book.id &&
+          b.requestedBy.filter(r => r.id === requesterId).length
+      ) {
         b.requestedBy = b.requestedBy.filter(r => r.id !== requesterId);
       }
       return b;
