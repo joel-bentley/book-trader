@@ -10,7 +10,7 @@ import {
 } from 'react-bootstrap';
 
 const NavigationBar = (
-  { router, isAuthenticated, displayName, avatar, reqNumber },
+  { router, isAuthenticated, displayName, avatar, numRequests },
 ) =>
   {
     return (
@@ -27,67 +27,48 @@ const NavigationBar = (
         <Navbar.Collapse>
           <Nav>
             <Link to="/">
-              {
-              ({ href, onClick }) => (
-                <NavItem href={href} onClick={onClick} eventKey={1}>
-                   Home 
-                </NavItem>
-              )
-            }
+              {({ href, onClick }) => (
+                  <NavItem href={href} onClick={onClick} eventKey={1}>
+                    Home
+                  </NavItem>
+                )}
             </Link>
-            {
-              isAuthenticated &&
-                (
+            {isAuthenticated && (
                   <Link to="/mybooks">
-                    {
-                    ({ href, onClick }) => (
-                      <NavItem href={href} onClick={onClick} eventKey={2}>
-                         My Books 
-                      </NavItem>
-                    )
-                  }
+                    {({ href, onClick }) => (
+                        <NavItem href={href} onClick={onClick} eventKey={2}>
+                          My Books
+                        </NavItem>
+                      )}
                   </Link>
-                )
-            }
-            {
-              isAuthenticated &&
-                (
+                )}
+            {isAuthenticated && (
                   <Link to="/addbooks">
-                    {
-                    ({ href, onClick }) => (
-                      <NavItem href={href} onClick={onClick} eventKey={3}>
-                         Add Books 
-                      </NavItem>
-                    )
-                  }
+                    {({ href, onClick }) => (
+                        <NavItem href={href} onClick={onClick} eventKey={3}>
+                          Add Books
+                        </NavItem>
+                      )}
                   </Link>
-                )
-            }
-            {
-              isAuthenticated &&
-                (
+                )}
+            {isAuthenticated && (
                   <Link to="/requests">
-                    {
-                    ({ href, onClick }) => (
-                      <NavItem href={href} onClick={onClick} eventKey={4}>
-                        {`Book Requests (${reqNumber})`}
-                      </NavItem>
-                    )
-                  }
+                    {({ href, onClick }) => (
+                        <NavItem href={href} onClick={onClick} eventKey={4}>
+                          {`Book Requests (${numRequests})`}
+                        </NavItem>
+                      )}
                   </Link>
-                )
-            }
+                )}
           </Nav>
           <Nav pullRight>
             {isAuthenticated ? (
                   <NavDropdown
-                    title={
-                      (
+                    title={(
                         <span>
                           <img src={avatar} role="presentation" />{displayName}
                         </span>
-                      )
-                    }
+                      )}
                     eventKey={5}
                     id="basic-nav-dropdown"
                   >
@@ -97,13 +78,13 @@ const NavigationBar = (
                         }}
                       eventKey={5.1}
                     >
-                       Profile 
+                      Profile
                     </MenuItem>
                     <MenuItem
                       href={`${process.env.PUBLIC_URL}/logout`}
                       eventKey={5.2}
                     >
-                       Logout 
+                      Logout
                     </MenuItem>
                   </NavDropdown>
                 ) : <Link to="/login">{({ href, onClick }) => <NavItem href={href} onClick={onClick} eventKey={5}> Login </NavItem>}</Link>}

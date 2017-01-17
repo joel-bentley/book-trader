@@ -25,6 +25,10 @@ const generateRandomId = (length, characters) => {
     .join('');
 };
 
+const flatten = arr => {
+  return arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+};
+
 class App extends React.Component {
   state = {
     userId: '',
@@ -120,7 +124,20 @@ class App extends React.Component {
     );
   };
 
-  confirmRequest = () => {};
+  confirmRequest = (book, userId) => {
+    const { books } = this.state;
+    const newBooks = books.map(b => {
+      if (b.id === book.id) {
+        b.lentTo = userId;
+        b.requestedBy = [];
+      }
+      return b;
+    });
+    this.setState(
+      { books: newBooks },
+      this.showAlert(`"${book.title}" by ${book.author} request confirmed.`),
+    );
+  };
 
   cancelRequest = (book, userId = this.state.userId) => {
     const { books } = this.state;
@@ -136,7 +153,19 @@ class App extends React.Component {
     );
   };
 
-  confirmReturn = () => {};
+  confirmReturn = book => {
+    const { books } = this.state;
+    const newBooks = books.map(b => {
+      if (b.id === book.id) {
+        b.lentTo = '';
+      }
+      return b;
+    });
+    this.setState(
+      { books: newBooks },
+      this.showAlert(`"${book.title}" by ${book.author} return confirmed.`),
+    );
+  };
 
   render() {
     const { router } = this.props;
@@ -153,12 +182,15 @@ class App extends React.Component {
 
     const isAuthenticated = true;
     // displayName !== ''
-    const reqNumber = 0;
-    // calculate number of requests on user's books
+    const myBooks = books.filter(b => b.owner.id === userId);
+    const numRequests = myBooks.length ? myBooks
+        .map(b => b.requestedBy.length)
+        .reduce((a, b) => a + b) : 0;
+
     return (
       <div className="App">
         <NavigationBar
-          {...{ router, isAuthenticated, displayName, avatar, reqNumber }}
+          {...{ router, isAuthenticated, displayName, avatar, numRequests }}
         />
         <div className="container">
           {isAuthenticated && (
@@ -198,7 +230,6 @@ class App extends React.Component {
             pattern="/mybooks"
             {...{ isAuthenticated }}
             render={() => {
-                const myBooks = books.filter(b => b.owner.id === userId);
                 const myUnlentBooks = myBooks.filter(b => !b.lentTo);
                 const myLentBooks = myBooks.filter(b => b.lentTo);
                 const requestedBooks = books.filter(
@@ -254,8 +285,25 @@ class App extends React.Component {
             pattern="/requests"
             {...{ isAuthenticated }}
             render={() => {
-                // const myBooksRequested  // button to confirm (or cancel) request
-                return <div></div>;
+                const myBooksRequested = flatten(
+                  myBooks
+                    .filter(b => b.requestedBy.length > 0)
+                    .map(b => {
+                      return b.requestedBy.map(r => {
+                        return { ...b, requestedBy: [ r ] };
+                      });
+                    }),
+                );
+
+                return (
+                  <div>
+                    {myBooksRequested.length === 0 ? (
+                          <div className="text-center">
+                            <p>No books here</p>
+                          </div>
+                        ) : <BookGrid books={myBooksRequested} confirmRequest={this.confirmRequest} cancelRequest={this.cancelRequest} />}
+                  </div>
+                );
               }}
           />
           <MatchWhenAuthorized

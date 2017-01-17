@@ -66,8 +66,10 @@ class Books(Resource):
     def get(self):
         """GET /api/books - Request book listing."""
         # owner info found in database from owner['id']
-        user_id = '000'
-        username = 'Tester'
+        user_id1 = '000'
+        username1 = 'Tester'
+        user_id2 = '948889321'
+        username2 = 'JoelBentley7'
         location = {'city': 'Ann Arbor', 'state': 'MI'}
 
         return [{'id': 'QGhkQ',
@@ -75,7 +77,7 @@ class Books(Resource):
                  'title': 'The Hunger Games',
                  'subtitle': '',
                  'author': 'Suzanne Collins',
-                 'owner': {'id': user_id, 'username': username, 'location': location},
+                 'owner': {'id': user_id1, 'username': username1, 'location': location},
                  'requestedBy': [],
                  'lentTo': ''},
                 {'id': 'bbd2j',
@@ -83,15 +85,31 @@ class Books(Resource):
                  'title': 'KAFKA ON THE SHORE',
                  'subtitle': '',
                  'author': 'Murakami Haruki',
-                 'owner': {'id': user_id, 'username': username, 'location': location},
+                 'owner': {'id': user_id1, 'username': username1, 'location': location},
                  'requestedBy': [],
+                 'lentTo': ''},
+                {'id': 'QGhkr',
+                 'olid': 'OL22549594M',
+                 'title': 'The Hunger Games',
+                 'subtitle': '',
+                 'author': 'Suzanne Collins',
+                 'owner': {'id': user_id2, 'username': username2, 'location': location},
+                 'requestedBy': ['000', '111', '222'],
+                 'lentTo': ''},
+                {'id': 'bbd2K',
+                 'olid': 'OL7318410M',
+                 'title': 'KAFKA ON THE SHORE',
+                 'subtitle': '',
+                 'author': 'Murakami Haruki',
+                 'owner': {'id': user_id2, 'username': username2, 'location': location},
+                 'requestedBy': ['000'],
                  'lentTo': ''},
                 {'id': '4n7Vz',
                  'olid': 'OL16159793M',
                  'title': 'The Name of the Wind',
                  'subtitle': '',
                  'author': 'Patrick Rothfuss',
-                 'owner': {'id': '948889321', 'username': 'JoelBentley7', 'location': location},
+                 'owner': {'id': user_id2, 'username': username2, 'location': location},
                  'requestedBy': [],
                  'lentTo': ''}]
 

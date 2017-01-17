@@ -71,7 +71,7 @@ class BookGrid extends React.Component {
                 <div
                   className="grid-item"
                   onClick={() => this.openModal(index)}
-                  key={`book-${book.id}`}
+                  key={`book-${index}`}
                 >
                   <img src={book.image} role="presentation" />
                 </div>
