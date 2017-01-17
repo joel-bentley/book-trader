@@ -239,7 +239,7 @@ class App extends React.Component {
                             </p>
                             <p>Ask your friends to join and add their books!</p>
                           </div>
-                        ) : <BookGrid books={availableBooks} requestBook={this.requestBook} {...{ isAuthenticated }} />}
+                        ) : <BookGrid books={availableBooks} requestBook={this.requestBook} cancelRequest={this.cancelRequest} {...{ isAuthenticated, userId }} />}
                   </div>
                 );
               }}
@@ -289,7 +289,7 @@ class App extends React.Component {
                           <div className="text-center">
                             <p>No books here</p>
                           </div>
-                        ) : <BookGrid books={requestedBooks} cancelRequest={this.cancelRequest} />}
+                        ) : <BookGrid books={requestedBooks} cancelRequest={this.cancelRequest} {...{ userId }} />}
                   </div>
                 );
               }}

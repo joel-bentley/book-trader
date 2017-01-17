@@ -10,6 +10,7 @@ class BookGrid extends React.Component {
 
   defaultProps = {
     isAuthenticated: false,
+    userId: '',
     addBook: null,
     removeBook: null,
     requestBook: null,
@@ -24,7 +25,9 @@ class BookGrid extends React.Component {
 
   closeModal = callback => {
     this.setState({ showModal: false });
-    callback && callback();
+    if (typeof callback === 'function') {
+      callback();
+    }
   };
 
   openModal = index => {
@@ -48,7 +51,7 @@ class BookGrid extends React.Component {
   };
 
   render() {
-    const { books, isAuthenticated } = this.props;
+    const { books, isAuthenticated, userId } = this.props;
     const {
       addBook,
       removeBook,
@@ -77,6 +80,9 @@ class BookGrid extends React.Component {
         </Masonry>
         <Modal show={showModal} onHide={this.closeModal}>
           <Modal.Body>
+            <div style={{ float: 'right' }}>
+              <img src={modalBook.image} role="presentation" />
+            </div>
             <h4>{modalBook.title}</h4>
             <h5>{modalBook.subtitle}</h5>
             <p>{modalBook.author}</p>
@@ -104,16 +110,6 @@ class BookGrid extends React.Component {
                     Confirm Request
                   </Button>
                 )}
-            {cancelRequest && (
-                  <Button
-                    onClick={
-                      () => this.closeModal(() => cancelRequest(modalBook))
-                    }
-                    bsStyle="primary"
-                  >
-                    Cancel Request
-                  </Button>
-                )}
             {confirmReturn && (
                   <Button
                     onClick={
@@ -124,23 +120,59 @@ class BookGrid extends React.Component {
                     Confirm Book Return
                   </Button>
                 )}
-            {requestBook && (isAuthenticated ? (
-                    <Button
-                      onClick={
-                        () => this.closeModal(() => requestBook(modalBook))
-                      }
-                      bsStyle="primary"
-                    >
-                      Request Book
-                    </Button>
-                  ) : (
+            {
+              requestBook &&
+                (isAuthenticated
+                  ? modalBook.requestedBy.filter(r => r.id === userId).length
+                    ? (
+                      <Button disabled bsStyle="primary">
+                        You have requested this book
+                      </Button>
+                    )
+                    : (
+                      <Button
+                        onClick={
+                          () => this.closeModal(() => requestBook(modalBook))
+                        }
+                        bsStyle="primary"
+                      >
+                        Request Book
+                      </Button>
+                    )
+                  : (
                     <Button disabled bsStyle="primary">
                       Log in to Request Book
                     </Button>
-                  ))}
-            <div style={{ textAlign: 'right' }}>
-              <img src={modalBook.image} role="presentation" />
-            </div>
+                  ))
+            }
+            {cancelRequest && (
+                  <div>
+                    {
+                      requestBook &&
+                        !modalBook.requestedBy.filter(
+                          r => r.id === userId,
+                        ).length
+                        ? <div></div>
+                        : (
+                          <div>
+                            <div style={{ height: '7px' }}></div>
+                            <Button
+                              onClick={
+                                () =>
+                                  this.closeModal(
+                                    () => cancelRequest(modalBook),
+                                  )
+                              }
+                              bsStyle="primary"
+                            >
+                              Cancel Request
+                            </Button>
+                          </div>
+                        )
+                    }
+                  </div>
+                )}
+            <div style={{ height: '180px' }}></div>
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.prevBook} bsStyle="success">
