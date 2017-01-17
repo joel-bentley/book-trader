@@ -90,8 +90,8 @@ class App extends React.Component {
     const moreProps = {
       id: generateRandomId(BOOK_ID_LENGTH, BOOK_ID_CHAR),
       owner: { id: this.state.userId },
-      requestedBy: '',
-      lentTo: '',
+      requestedBy: [],
+      lentTo: null,
     };
     newBook = { ...newBook, ...moreProps };
     this.setState(
@@ -113,8 +113,12 @@ class App extends React.Component {
     // for this need to first have server database confirm book is available and update database
     const { books, userId } = this.state;
     const newBooks = books.map(b => {
-      if (b.id === book.id && b.requestedBy.indexOf(userId) === -1) {
-        b.requestedBy.push(userId);
+      const userAlreadyRequested = b.requestedBy.filter(
+        r => r.id === userId,
+      ).length;
+
+      if (b.id === book.id && !userAlreadyRequested) {
+        b.requestedBy.push({ id: userId });
       }
       return b;
     });
@@ -128,7 +132,7 @@ class App extends React.Component {
     const { books } = this.state;
     const newBooks = books.map(b => {
       if (b.id === book.id) {
-        b.lentTo = userId;
+        b.lentTo = { id: userId };
         b.requestedBy = [];
       }
       return b;
@@ -139,14 +143,20 @@ class App extends React.Component {
     );
   };
 
-  cancelRequest = (book, userId = this.state.userId) => {
+  cancelRequest = book => {
     const { books } = this.state;
+
+    const requesterId = book.requestedBy.length === 1
+      ? book.requestedBy[0].id
+      : this.state.userId;
+
     const newBooks = books.map(b => {
       if (b.id === book.id) {
-        b.requestedBy = b.requestedBy.filter(u => u !== userId);
+        b.requestedBy = b.requestedBy.filter(r => r.id !== requesterId);
       }
       return b;
     });
+
     this.setState(
       { books: newBooks },
       this.showAlert(`"${book.title}" by ${book.author} request canceled.`),
@@ -157,7 +167,7 @@ class App extends React.Component {
     const { books } = this.state;
     const newBooks = books.map(b => {
       if (b.id === book.id) {
-        b.lentTo = '';
+        b.lentTo = null;
       }
       return b;
     });
@@ -233,9 +243,11 @@ class App extends React.Component {
                 const myUnlentBooks = myBooks.filter(b => !b.lentTo);
                 const myLentBooks = myBooks.filter(b => b.lentTo);
                 const requestedBooks = books.filter(
-                  b => b.requestedBy.indexOf(userId) !== -1,
+                  b => b.requestedBy.filter(r => r.id === userId).length,
                 );
-                const booksBorrowed = books.filter(b => b.lentTo === userId);
+                const booksBorrowed = books.filter(
+                  b => b.lentTo && b.lentTo.id === userId,
+                );
 
                 return (
                   <div>
