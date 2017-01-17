@@ -267,7 +267,7 @@ class App extends React.Component {
                           </div>
                         ) : <BookGrid books={myUnlentBooks} removeBook={this.removeBook} />}
                     <hr />
-                    <h3>Borrowed Books</h3>
+                    <h3>Books I have Borrowed</h3>
                     <br />
                     {booksBorrowed.length === 0 ? (
                           <div className="text-center">
@@ -283,7 +283,7 @@ class App extends React.Component {
                           </div>
                         ) : <BookGrid books={myLentBooks} confirmReturn={this.confirmReturn} />}
                     <hr />
-                    <h3>Requested Books</h3>
+                    <h3>Books I have Requested</h3>
                     <br />
                     {requestedBooks.length === 0 ? (
                           <div className="text-center">
