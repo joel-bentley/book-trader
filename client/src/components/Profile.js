@@ -12,14 +12,20 @@ class Profile extends React.Component {
   };
 
   render() {
-    const { username, avatar, fullName, location, profileUpdate } = this.props;
+    const {
+      twitterName,
+      avatar,
+      fullName,
+      location,
+      profileUpdate,
+    } = this.props;
     const { fullNameInput, cityInput, stateInput } = this.state;
 
     return (
       <div>
         <img src={avatar} role="presentation" />
         <h4>Twitter:</h4>
-        <p>{username}</p>
+        <p>{twitterName}</p>
         <h4>Full Name:</h4>
         {
           fullNameInput

@@ -1,0 +1,69 @@
+User Table
+{
+  "userId": 1(db key),
+  "twitterName": "<twitter_name>",
+  "fullName": "Full Name", 
+  "city": "My City", 
+  "state": "My State"
+}
+
+GET /api/profile
+{
+  "userId": 1(db key),
+  "twitterName": "<twitter_name>",
+  "avatar": "https://twitter.com/<twitter_name>/profile_image?size=normal", 
+  "fullName": "Full Name", 
+  "city": "My City", 
+  "state": "My State"
+}
+
+PUT /api/profile
+{ "city": "New City"}
+
+
+Book Table
+{
+  "bookId": "QGhkQ",
+  "title": "The Hunger Games",
+  "subtitle": "",
+  "author": "Suzanne Collins", 
+  "olid": "OL22549594M",      
+  "owner": 2,
+  "lentTo": null | 1,
+  "requestedBy": [] | [1,3]
+  }
+
+GET /api/books
+[
+  {
+    "bookId": "QGhkQ",
+    "title": "The Hunger Games",
+    "subtitle": "",
+    "author": "Suzanne Collins", 
+    "olid": "OL22549594M",      
+    "owner": {
+      "userId": 2, 
+      "twitterName": "tester7",
+      "fullName": "Test Tester",
+      "city": "Another Place", 
+      "state": "MI",
+
+    },
+    "lentTo": null | { "userId": 1, "city": "My City", "state": "My State"},
+    "requestedBy": [] | [{ "userId": 1,
+                           "twitterName": "tester2",
+                           "fullName": "Test Tester",
+                           "city": "My City",
+                           "state": "My State"
+                         },
+                         { "userId": 3,
+                           "twitterName": "tester3",
+                           "fullName": "Test Tester",
+                           "city": "My City",
+                           "state": "My State"
+                         }]
+  }
+]
+
+DELETE /api/book
+{ "bookId": "QGhkQ"}

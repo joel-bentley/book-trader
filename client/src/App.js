@@ -32,7 +32,7 @@ const flatten = arr => {
 class App extends React.Component {
   state = {
     userId: '',
-    username: '',
+    twitterName: '',
     displayName: '',
     avatar: '',
     fullName: '',
@@ -53,8 +53,15 @@ class App extends React.Component {
     return axios
       .all([ getProfile(), getBooks() ])
       .then(res => {
-        const { userId, username, avatar, fullName, location } = res[0].data;
-        const displayName = fullName || username;
+        const {
+          userId,
+          twitterName,
+          avatar,
+          fullName,
+          city,
+          state,
+        } = res[0].data;
+        const displayName = fullName || twitterName;
         const books = res[1].data.map(book => {
           const image = `http://covers.openlibrary.org/b/olid/${book.olid}-M.jpg`;
           return { ...book, image };
@@ -62,10 +69,10 @@ class App extends React.Component {
         // console.dir({books})
         this.setState({
           userId,
-          username,
+          twitterName,
           displayName,
           avatar,
-          location,
+          location: { city, state },
           books,
         });
       })
@@ -192,7 +199,7 @@ class App extends React.Component {
       books,
       displayName,
       userId,
-      username,
+      twitterName,
       avatar,
       fullName,
       location,
@@ -333,7 +340,7 @@ class App extends React.Component {
               () => (
                 <Profile
                   updateProfile={this.updateProfile}
-                  {...{ username, avatar, fullName, location }}
+                  {...{ twitterName, avatar, fullName, location }}
                   profileUpdate={this.profileUpdate}
                 />
               )
