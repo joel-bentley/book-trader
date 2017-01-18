@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask import jsonify, redirect, request, send_from_directory, session, url_for
+from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_oauthlib.client import OAuth
 from functools import wraps
@@ -8,6 +9,8 @@ from functools import wraps
 app = Flask(__name__, static_folder='client/build', static_url_path='')
 app.config.from_object(os.environ['APP_SETTINGS'])
 
+SESSION_TYPE = 'redis'
+Session(app)
 
 ### OAUTH ###
 
@@ -60,7 +63,7 @@ class Book(db.Model):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get('user_id') is None:
+        if twitter_token in session:
             return jsonify({'error': 'You must be logged in first.'})
         return f(*args, **kwargs)
     return decorated_function
