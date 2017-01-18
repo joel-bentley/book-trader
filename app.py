@@ -1,40 +1,114 @@
 import os
 from flask import Flask
-from flask import redirect, request, send_from_directory, session, url_for
+from flask import jsonify, redirect, request, send_from_directory, session, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Api
+from flask_oauthlib.client import OAuth
+from functools import wraps
 
 app = Flask(__name__, static_folder='client/build', static_url_path='')
 app.config.from_object(os.environ['APP_SETTINGS'])
 
-api = Api(app)
+
+### OAUTH ###
+
+oauth = OAuth(app)
+twitter = oauth.remote_app(name='twitter',
+                           base_url='https://api.twitter.com/1/',
+                           request_token_url='https://api.twitter.com/oauth/request_token',
+                           access_token_url='https://api.twitter.com/oauth/access_token',
+                           authorize_url='https://api.twitter.com/oauth/authenticate',
+                           consumer_key=os.environ['TWITTER_KEY'],
+                           consumer_secret=os.environ['TWITTER_SECRET']
+                           )
+
+
+@twitter.tokengetter
+def get_twitter_token(token=None):
+    # change this to read twitter_token from db
+    #   or use Flask-Session
+    return session.get('twitter_token')
+
+
+### DATABASE ###
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
-from api_routes import Profile, Books
-from models import User, Book
-from auth import twitter
+#from models import User, Book
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(80), unique=True)
+    twitter_id = db.Column(db.String(80), unique=True)
+    twitter_name = db.Column(db.String(80))
+
+
+class Book(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80))
+    author = db.Column(db.String(80))
+    image = db.Column(db.String(80))
 
 # @app.before_first_request
 # def create_tables():
 #     db.create_all()
 
-
-@twitter.tokengetter
-def get_twitter_token(token=None):
-    return session.get('twitter_token')
+### LOGIN DECORATOR ###
 
 
-api.add_resource(Profile, '/api/profile')
-api.add_resource(Books, '/api/books')
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('user_id') is None:
+            return jsonify({'error': 'You must be logged in first.'})
+        return f(*args, **kwargs)
+    return decorated_function
 
+
+### API ROUTES ###
+
+@app.route('/api/profile', methods=['GET'])
+#@login_required
+def getProfile():
+    # twitter_id = session.get('twitter_id')
+    # twitter_name = session.get('twitter_name')
+    twitter_id = '948889321'
+    twitter_name = 'JoelBentley7'
+
+    # full_name and location found in Database using user_id
+    full_name = 'Joel Bentley'
+    location = {'city': 'Ann Arbor', 'state': 'MI'}
+
+    if twitter_id:
+        return jsonify({'userId': twitter_id,
+                        'username': twitter_name,
+                        'fullName': full_name,
+                        'location': location,
+                        'avatar':
+                        'https://twitter.com/{}/profile_image?size=normal'.format(twitter_name)})
+
+    return jsonify({'userId': '', 'username': '', 'fullName': '', 'location': '', 'avatar': ''})
+
+
+@app.route('/api/books', methods=['GET'])
+#@login_required
+def getBooks():
+    from sample_data import sample_data
+    # owner info found in database from owner['id']
+
+    return jsonify(sample_data)
+
+
+### ROUTE ###
 
 @app.route('/')
 def home():
     """Route for html file with single page React app."""
     return send_from_directory(app.static_folder, 'index.html')
 
+
+### AUTH ###
 
 @app.route('/auth/twitter')
 def twitter_auth():
@@ -53,6 +127,8 @@ def twitter_auth_callback():
         ))
         return redirect(next_url)
 
+    # change this to write twitter_token to db
+    #   or use Flask-Session
     session['twitter_token'] = (
         resp['oauth_token'],
         resp['oauth_token_secret']
@@ -82,6 +158,8 @@ def twitter_auth_callback():
 @app.route('/logout')
 def logout():
     """Logout by removing session keys."""
+    # Should only store user_id on session
+    # Remove tokens from database here
     session.pop('twitter_name', None)
     session.pop('twitter_id', None)
     session.pop('twitter_token', None)

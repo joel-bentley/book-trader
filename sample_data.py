@@ -1,0 +1,47 @@
+
+user_id1 = '000'
+username1 = 'Tester'
+user_id2 = '948889321'
+username2 = 'JoelBentley7'
+location = {'city': 'Ann Arbor', 'state': 'MI'}
+
+sample_data = [{'id': 'QGhkQ',
+                'olid': 'OL22549594M',
+                'title': 'The Hunger Games',
+                'subtitle': '',
+                'author': 'Suzanne Collins',
+                'owner': {'id': user_id1, 'username': username1, 'location': location},
+                'requestedBy': [],
+                'lentTo': None},
+               {'id': 'bbd2j',
+                'olid': 'OL7318410M',
+                'title': 'KAFKA ON THE SHORE',
+                'subtitle': '',
+                'author': 'Murakami Haruki',
+                'owner': {'id': user_id1, 'username': username1, 'location': location},
+                'requestedBy': [],
+                'lentTo': None},
+               {'id': 'QGhkr',
+                'olid': 'OL22549594M',
+                'title': 'The Hunger Games',
+                'subtitle': '',
+                'author': 'Suzanne Collins',
+                'owner': {'id': user_id2, 'username': username2, 'location': location},
+                'requestedBy': [{'id': '000'}, {'id': '111'}, {'id': '222'}],
+                'lentTo': None},
+               {'id': 'bbd2K',
+                'olid': 'OL7318410M',
+                'title': 'KAFKA ON THE SHORE',
+                'subtitle': '',
+                'author': 'Murakami Haruki',
+                'owner': {'id': user_id2, 'username': username2, 'location': location},
+                'requestedBy': [{'id': '000'}],
+                'lentTo': None},
+               {'id': '4n7Vz',
+                'olid': 'OL16159793M',
+                'title': 'The Name of the Wind',
+                'subtitle': '',
+                'author': 'Patrick Rothfuss',
+                'owner': {'id': user_id2, 'username': username2, 'location': location},
+                'requestedBy': [],
+                'lentTo': None}]
