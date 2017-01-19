@@ -12,6 +12,7 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 SESSION_TYPE = 'redis'
 Session(app)
 
+
 ### OAUTH ###
 
 oauth = OAuth(app)
@@ -39,19 +40,35 @@ db = SQLAlchemy(app)
 
 #from models import User, Book
 
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(80), unique=True)
-    twitter_id = db.Column(db.String(80), unique=True)
-    twitter_name = db.Column(db.String(80))
+requested_by = db.Table('requested_by',
+                        db.Column('user_id', db.Integer,
+                                  db.ForeignKey('user.id')),
+                        db.Column('book_id', db.Integer,
+                                  db.ForeignKey('book.id'))
+                        )
 
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.String(10))
     title = db.Column(db.String(80))
+    subtitle = db.Column(db.String(80))
     author = db.Column(db.String(80))
-    image = db.Column(db.String(80))
+    olid = db.Column(db.String(80))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    lent_to = db.Column(db.Integer, db.ForeignKey('user.id'))
+    requested_by = db.relationship('User', secondary=requested_by,
+                                   backref=db.backref('books', lazy='select'))
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    twitter_id = db.Column(db.String(80), unique=True)
+    twitter_name = db.Column(db.String(80))
+    full_name = db.Column(db.String(80))
+    city = db.Column(db.String(80))
+    state = db.Column(db.String(80))
+
 
 # @app.before_first_request
 # def create_tables():

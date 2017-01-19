@@ -1,7 +1,8 @@
 User Table
 {
-  "userId": 1(db key),
-  "twitterName": "<twitter_name>",
+  "id": 1(db key),
+  "twitter_id": "<twitter_id>"
+  "twitter_name": "<twitter_name>",
   "fullName": "Full Name", 
   "city": "My City", 
   "state": "My State"
@@ -23,13 +24,13 @@ PUT /api/profile
 
 Book Table
 {
-  "bookId": "QGhkQ",
+  "book_id": "QGhkQ",
   "title": "The Hunger Games",
   "subtitle": "",
   "author": "Suzanne Collins", 
   "olid": "OL22549594M",      
-  "owner": 2,
-  "lentTo": null | 1,
+  "owner_id": 2,
+  "lentTo": NULL | 1,
   "requestedBy": [] | [1,3]
   }
 
