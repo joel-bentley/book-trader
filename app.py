@@ -40,36 +40,39 @@ db = SQLAlchemy(app)
 
 requested_by = db.Table('requested_by',
                         db.Column('user_id', db.Integer,
-                                  db.ForeignKey('user.id')),
+                                  db.ForeignKey('users.id')),
                         db.Column('book_id', db.Integer,
-                                  db.ForeignKey('book.id'))
+                                  db.ForeignKey('books.id'))
                         )
 
 
 class Book(db.Model):
+    __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
-    book_id = db.Column(db.String(10))
+    book_id = db.Column(db.String(10), unique=True)
     title = db.Column(db.String(80))
     subtitle = db.Column(db.String(80))
     author = db.Column(db.String(80))
     olid = db.Column(db.String(80))
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    lent_to = db.Column(db.Integer, db.ForeignKey('user.id'))
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    lent_to = db.Column(db.Integer, db.ForeignKey('users.id'))
     requested_by = db.relationship('User', secondary=requested_by,
                                    backref=db.backref('books', lazy='select'))
 
 
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     twitter_id = db.Column(db.String(80), unique=True)
     twitter_name = db.Column(db.String(80))
     full_name = db.Column(db.String(80))
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'))
     location = db.relationship(
-        'Location', backref=db.backref('user', uselist=False))
+        'Location', backref=db.backref('users', uselist=False))
 
 
 class Location(db.Model):
+    __tablename__ = 'locations'
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(80))
     state = db.Column(db.String(80))
@@ -84,33 +87,33 @@ def create_tables():
     if True:
         from sample_data import sample_users, sample_books
         for user in sample_users:
-            new_user = User(id=user['id'],
-                            twitter_id=user['twitter_id'],
+            new_user = User(twitter_id=user['twitter_id'],
                             twitter_name=user['twitter_name'],
                             full_name=user['full_name'])
-            new_location = Location(city=user['location']['city'],
-                                    state=user['location']['state'])
-            new_user.location = new_location
+            user_location = Location(city=user['location']['city'],
+                                     state=user['location']['state'])
+            new_user.location = user_location
             db.session.add(new_user)
-            db.session.commit()
-            db.session.add(new_location)
+            db.session.add(user_location)
             db.session.commit()
 
-        # for book in sample_books:
-        #     new_book = Book(book_id=book['book_id'],
-        #                     olid=book['olid'],
-        #                     title=book['title'],
-        #                     subtitle=book['subtitle'],
-        #                     author=book['author'],
-        #                     owner_id=book['owner_id'])
-        #     new_request = requested_by=book['requested_by']
-        #     db.session.add(new_book)
-        #     db.session.commit()
+        for book in sample_books:
+            new_book = Book(book_id=book['book_id'],
+                            olid=book['olid'],
+                            title=book['title'],
+                            subtitle=book['subtitle'],
+                            author=book['author'],
+                            owner_id=book['owner_id'])
+            for req in book['requested_by']:
+                req_user = User.query.get(req)
+                new_book.requested_by.append(req_user)
+            db.session.add(new_book)
+            db.session.commit()
 
     return jsonify({'message': 'Reset successful'})
 
-### LOGIN DECORATOR ###
 
+### LOGIN DECORATOR ###
 
 def login_required(f):
     @wraps(f)
@@ -126,20 +129,22 @@ def login_required(f):
 @app.route('/api/profile', methods=['GET'])
 #@login_required
 def getProfile():
-    twitter_id = session.get('twitter_id')
-    # twitter_name = session.get('twitter_name')
+    # user_id = session.get('user_id')
+    # twitter_id = session.get('twitter_id')
+    user_id = 3
     # twitter_id = '948889321'
-    # twitter_name = 'JoelBentley7'
 
     # full_name and location found in Database using user_id
-    full_name = 'Joel Bentley'
-    location = {'city': 'Ann Arbor', 'state': 'MI'}
+    # full_name = 'Joel Bentley'
+    # location = {'city': 'Ann Arbor', 'state': 'MI'}
 
-    if twitter_id:
+    if user_id:
+        user = User.query.filter_by(id=user_id).first()
         return jsonify({'userId': user_id,
-                        'twitterName': twitter_name,
-                        'fullName': full_name,
-                        'location': location})
+                        'twitterName': user.twitter_name,
+                        'fullName': user.full_name,
+                        'location': {'city': user.location.city,
+                                     'state': user.location.state}})
 
     return jsonify({'userId': '', 'twitterName': '', 'fullName': '', 'location': ''})
 
@@ -147,10 +152,47 @@ def getProfile():
 @app.route('/api/books', methods=['GET'])
 #@login_required
 def getBooks():
-    from sample_data import sample_data
-    # owner info found in database from owner['id']
+    books = []
+    for book in Book.query.all():
+        book_requests = [{'userId': user.id,
+                          'twitterName': user.twitter_name,
+                          'fullName': user.full_name,
+                          'location': {'city': user.location.city,
+                                       'state': user.location.state}}
+                         for user in book.requested_by]
+        owner = User.query.get(book.owner_id)
+        borrower_id = book.lent_to
+        if borrower_id:
+            borrower = User.query.get(borrower_id)
+            lent_to = {'userId': borrower.id,
+                       'twitterName': borrower.twitter_name,
+                       'fullName': borrower.full_name,
+                       'location': {'city': borrower.location.city,
+                                    'state': borrower.location.state}}
+        else:
+            lent_to = None
 
-    return jsonify(sample_data)
+        books.append({'book_id': book.book_id,
+                      'title': book.title,
+                      'subtitle': book.subtitle,
+                      'author': book.author,
+                      'olid': book.olid,
+                      'owner': {'userId': owner.id,
+                                'twitterName': owner.twitter_name,
+                                'fullName': owner.full_name,
+                                'location': {'city': owner.location.city,
+                                             'state': owner.location.state}},
+                      'lentTo': lent_to,
+                      'requestedBy': book_requests})
+    return jsonify(books)
+
+    # {'book_id': 'bad3K',
+    #              'olid': 'OL893527W',
+    #              'title': 'Dune',
+    #              'subtitle': '',
+    #              'author': 'Frank Herbert',
+    #              'owner_id': 3,
+    #              'requested_by': [1]
 
 
 ### ROUTE ###
@@ -202,6 +244,9 @@ def twitter_auth_callback():
         db.session.add(new_user)
         db.session.commit()
 
+    user_id = User.query.filter_by(twitter_id=twitter_id).first().id
+    session['user_id'] = user_id
+
     return redirect(next_url)
 
 
@@ -211,6 +256,7 @@ def logout():
     session.pop('twitter_token', None)
     session.pop('twitter_name', None)
     session.pop('twitter_id', None)
+    session.pop('user_id', None)
     return redirect(url_for('home'))
 
 
