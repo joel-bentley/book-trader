@@ -53,14 +53,8 @@ class App extends React.Component {
     return axios
       .all([ getProfile(), getBooks() ])
       .then(res => {
-        const {
-          userId,
-          twitterName,
-          avatar,
-          fullName,
-          city,
-          state,
-        } = res[0].data;
+        const { userId, twitterName, fullName, location } = res[0].data;
+        const avatar = `https://twitter.com/${twitterName}/profile_image?size=normal`;
         const displayName = fullName || twitterName;
         const books = res[1].data.map(book => {
           const image = `http://covers.openlibrary.org/b/olid/${book.olid}-M.jpg`;
@@ -72,7 +66,7 @@ class App extends React.Component {
           twitterName,
           displayName,
           avatar,
-          location: { city, state },
+          location,
           books,
         });
       })

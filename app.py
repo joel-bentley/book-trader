@@ -64,14 +64,50 @@ class User(db.Model):
     twitter_id = db.Column(db.String(80), unique=True)
     twitter_name = db.Column(db.String(80))
     full_name = db.Column(db.String(80))
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship(
+        'Location', backref=db.backref('user', uselist=False))
+
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(80))
     state = db.Column(db.String(80))
 
 
-@app.before_first_request
+# @app.before_first_request
+@app.route('/reset')
 def create_tables():
+    db.drop_all()
     db.create_all()
+    # If empty database
+    if True:
+        from sample_data import sample_users, sample_books
+        for user in sample_users:
+            new_user = User(id=user['id'],
+                            twitter_id=user['twitter_id'],
+                            twitter_name=user['twitter_name'],
+                            full_name=user['full_name'])
+            new_location = Location(city=user['location']['city'],
+                                    state=user['location']['state'])
+            new_user.location = new_location
+            db.session.add(new_user)
+            db.session.commit()
+            db.session.add(new_location)
+            db.session.commit()
 
+        # for book in sample_books:
+        #     new_book = Book(book_id=book['book_id'],
+        #                     olid=book['olid'],
+        #                     title=book['title'],
+        #                     subtitle=book['subtitle'],
+        #                     author=book['author'],
+        #                     owner_id=book['owner_id'])
+        #     new_request = requested_by=book['requested_by']
+        #     db.session.add(new_book)
+        #     db.session.commit()
+
+    return jsonify({'message': 'Reset successful'})
 
 ### LOGIN DECORATOR ###
 
@@ -100,14 +136,12 @@ def getProfile():
     location = {'city': 'Ann Arbor', 'state': 'MI'}
 
     if twitter_id:
-        return jsonify({'userId': twitter_id,
-                        'username': twitter_name,
+        return jsonify({'userId': user_id,
+                        'twitterName': twitter_name,
                         'fullName': full_name,
-                        'location': location,
-                        'avatar':
-                        'https://twitter.com/{}/profile_image?size=normal'.format(twitter_name)})
+                        'location': location})
 
-    return jsonify({'userId': '', 'username': '', 'fullName': '', 'location': '', 'avatar': ''})
+    return jsonify({'userId': '', 'twitterName': '', 'fullName': '', 'location': ''})
 
 
 @app.route('/api/books', methods=['GET'])
