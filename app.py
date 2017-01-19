@@ -28,8 +28,6 @@ twitter = oauth.remote_app(name='twitter',
 
 @twitter.tokengetter
 def get_twitter_token(token=None):
-    # change this to read twitter_token from db
-    #   or use Flask-Session
     return session.get('twitter_token')
 
 
@@ -70,9 +68,10 @@ class User(db.Model):
     state = db.Column(db.String(80))
 
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
 
 ### LOGIN DECORATOR ###
 
@@ -91,10 +90,10 @@ def login_required(f):
 @app.route('/api/profile', methods=['GET'])
 #@login_required
 def getProfile():
-    # twitter_id = session.get('twitter_id')
+    twitter_id = session.get('twitter_id')
     # twitter_name = session.get('twitter_name')
-    twitter_id = '948889321'
-    twitter_name = 'JoelBentley7'
+    # twitter_id = '948889321'
+    # twitter_name = 'JoelBentley7'
 
     # full_name and location found in Database using user_id
     full_name = 'Joel Bentley'
@@ -147,30 +146,27 @@ def twitter_auth_callback():
         ))
         return redirect(next_url)
 
-    # change this to write twitter_token to db
-    #   or use Flask-Session
+    twitter_name = resp['screen_name']
+    twitter_id = resp['user_id']
+
     session['twitter_token'] = (
         resp['oauth_token'],
         resp['oauth_token_secret']
     )
-    twitter_name = resp['screen_name']
-    twitter_id = resp['user_id']
-
     session['twitter_name'] = twitter_name
     session['twitter_id'] = twitter_id
 
-    # Twitter id does not change for an account,
-    #   but a user can change name through Twitter.
-    # user = User.query.filter_by(twitter_id=twitter_id).first()
-    #
-    # if user:
-    #    if user.twitter_name != twitter_name:
-    #        user.twitter_name = twitter_name
-    #        db.session.commit()
-    # else:
-    #     new_user = User(twitter_id, twitter_name)
-    #     db.session.add(new_user)
-    #     db.session.commit()
+    user = User.query.filter_by(twitter_id=twitter_id).first()
+
+    # Twitter Name associated with Twitter Id can be changed
+    if user:
+        if user.twitter_name != twitter_name:
+            user.twitter_name = twitter_name
+            db.session.commit()
+    else:
+        new_user = User(twitter_id=twitter_id, twitter_name=twitter_name)
+        db.session.add(new_user)
+        db.session.commit()
 
     return redirect(next_url)
 
@@ -178,11 +174,9 @@ def twitter_auth_callback():
 @app.route('/logout')
 def logout():
     """Logout by removing session keys."""
-    # Should only store user_id on session
-    # Remove tokens from database here
+    session.pop('twitter_token', None)
     session.pop('twitter_name', None)
     session.pop('twitter_id', None)
-    session.pop('twitter_token', None)
     return redirect(url_for('home'))
 
 
