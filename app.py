@@ -224,6 +224,94 @@ def postBook():
     db.session.commit()
     return jsonify(data)
 
+
+@app.route('/api/book/remove', methods=['PUT'])
+#@login_required
+def deleteBook():
+    data = request.json
+    # user_id = session.get('user_id')
+    user_id = 3
+    book_id = data['bookId']
+
+    book = Book.query.filter_by(book_id=book_id).first()
+    db.session.delete(book)
+    db.session.commit()
+    return jsonify(data)
+
+
+@app.route('/api/request', methods=['POST'])
+#@login_required
+def postRequest():
+    data = request.json
+    # user_id = session.get('user_id')
+    user_id = 3
+    book_id = data['bookId']
+
+    user = User.query.get(user_id)
+    book = Book.query.filter_by(book_id=book_id).first()
+
+    book.requested_by.append(user)
+
+    db.session.commit()
+    return jsonify(data)
+
+
+@app.route('/api/request/confirm', methods=['POST'])
+#@login_required
+def postConfirmRequest():
+    data = request.json
+    # user_id = session.get('user_id')
+    user_id = 3
+
+    book_id = data['bookId']
+    requester_id = data['requesterId']
+
+    book = Book.query.filter_by(book_id=book_id).first()
+
+    if book.owner_id == user_id:
+        book.requested_by = []
+        book.lent_to = requester_id
+
+    db.session.commit()
+    return jsonify(data)
+
+
+@app.route('/api/request/cancel', methods=['POST'])
+#@login_required
+def postCancelRequest():
+    data = request.json
+    # user_id = session.get('user_id')
+    user_id = 3
+
+    book_id = data['bookId']
+    requester_id = data['requesterId']
+    book = Book.query.filter_by(book_id=book_id).first()
+
+    new_requested_by = [
+        user for user in book.requested_by if user.id != requester_id]
+
+    book.requested_by = new_requested_by
+    db.session.commit()
+    return jsonify(data)
+
+
+@app.route('/api/return', methods=['POST'])
+#@login_required
+def postReturn():
+    data = request.json
+    # user_id = session.get('user_id')
+    user_id = 3
+
+    book_id = data['bookId']
+    book = Book.query.filter_by(book_id=book_id).first()
+
+    if book.owner_id == user_id:
+        book.lent_to = None
+
+    db.session.commit()
+    return jsonify(data)
+
+
 ### INDEX ROUTE ###
 
 

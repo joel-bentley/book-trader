@@ -17,7 +17,7 @@ const getBooks = () => axios.get(`${API}/books`);
 
 const editProfile = data => axios.put(`${API}/profile`, data);
 const postBook = book => axios.post(`${API}/book`, book);
-const deleteBook = bookId => axios.delete(`${API}/book`, { bookId });
+const deleteBook = bookId => axios.put(`${API}/book/remove`, { bookId });
 
 const postRequest = bookId => axios.post(`${API}/request`, { bookId });
 const postConfirmRequest = (bookId, requesterId) =>
@@ -107,7 +107,10 @@ class App extends React.Component {
     this.setState(newState);
     editProfile(newState).catch(err => {
       //set back to previous value on error
-      this.setState(currentStateCopy);
+      this.setState(
+        currentStateCopy,
+        this.showAlert('Error while updating profile.'),
+      );
       console.log('error:', err);
     });
   };
@@ -142,33 +145,57 @@ class App extends React.Component {
   };
 
   removeBook = book => {
+    const { books } = this.state;
+    const currentStateCopy = { ...{ books } };
     this.setState(
       { books: this.state.books.filter(b => b.bookId !== book.bookId) },
       this.showAlert(`"${book.title}" by ${book.author} removed.`),
     );
+    deleteBook(book.bookId).catch(err => {
+      //set back to previous value on error
+      this.setState(
+        currentStateCopy,
+        this.showAlert('Error while removing book'),
+      );
+      console.log('error:', err);
+    });
   };
 
   requestBook = book => {
-    // for this need to first have server database confirm book is available and update database
     const { books, userId } = this.state;
-    const newBooks = books.map(b => {
-      const userAlreadyRequested = b.requestedBy.filter(
-        r => r.userId === userId,
-      ).length;
+    const currentStateCopy = { ...{ books } };
 
-      if (b.bookId === book.bookId && !userAlreadyRequested) {
-        b.requestedBy.push({ userId });
-      }
-      return b;
-    });
-    this.setState(
-      { books: newBooks },
-      this.showAlert(`"${book.title}" by ${book.author} requested.`),
-    );
+    // first have database confirm book is available and update database
+    postRequest(book.bookId)
+      .then(() => {
+        const newBooks = books.map(b => {
+          const userAlreadyRequested = b.requestedBy.filter(
+            r => r.userId === userId,
+          ).length;
+
+          if (b.bookId === book.bookId && !userAlreadyRequested) {
+            b.requestedBy.push({ userId });
+          }
+          return b;
+        });
+        this.setState(
+          { books: newBooks },
+          this.showAlert(`"${book.title}" by ${book.author} requested.`),
+        );
+      })
+      .catch(err => {
+        //set back to previous value on error
+        this.setState(
+          currentStateCopy,
+          this.showAlert('Error while requesting book'),
+        );
+        console.log('error:', err);
+      });
   };
 
   confirmRequest = book => {
     const { books } = this.state;
+    const currentStateCopy = { ...{ books } };
     const requester = book.requestedBy[0];
 
     const newBooks = books.map(b => {
@@ -185,10 +212,19 @@ class App extends React.Component {
       { books: newBooks },
       this.showAlert(`"${book.title}" by ${book.author} request confirmed.`),
     );
+    postConfirmRequest(book.bookId, requester.userId).catch(err => {
+      //set back to previous value on error
+      this.setState(
+        currentStateCopy,
+        this.showAlert('Error while confirming book request.'),
+      );
+      console.log('error:', err);
+    });
   };
 
   cancelRequest = book => {
     const { books } = this.state;
+    const currentStateCopy = { ...{ books } };
 
     const requesterId = book.requestedBy.length === 1
       ? book.requestedBy[0].userId
@@ -203,15 +239,23 @@ class App extends React.Component {
       }
       return b;
     });
-
     this.setState(
       { books: newBooks },
       this.showAlert(`"${book.title}" by ${book.author} request canceled.`),
     );
+    postCancelRequest(book.bookId, requesterId).catch(err => {
+      //set back to previous value on error
+      this.setState(
+        currentStateCopy,
+        this.showAlert('Error while canceling book request.'),
+      );
+      console.log('error:', err);
+    });
   };
 
   confirmReturn = book => {
     const { books } = this.state;
+    const currentStateCopy = { ...{ books } };
     const newBooks = books.map(b => {
       if (b.bookId === book.bookId) {
         b.lentTo = null;
@@ -222,6 +266,14 @@ class App extends React.Component {
       { books: newBooks },
       this.showAlert(`"${book.title}" by ${book.author} return confirmed.`),
     );
+    postReturn(book.bookId).catch(err => {
+      //set back to previous value on error
+      this.setState(
+        currentStateCopy,
+        this.showAlert('Error while confirming book return.'),
+      );
+      console.log('error:', err);
+    });
   };
 
   render() {
