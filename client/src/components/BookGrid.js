@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button, Glyphicon, Modal } from 'react-bootstrap';
-
 import Masonry from 'react-masonry-component';
+
+import UserInfo from './UserInfo';
 
 import './BookGrid.css';
 
@@ -62,6 +63,7 @@ class BookGrid extends React.Component {
     } = this.props;
     const { showModal, bookIndex } = this.state;
     const modalBook = books && books[bookIndex];
+    const numBooks = books.length;
 
     return (
       <div>
@@ -79,7 +81,7 @@ class BookGrid extends React.Component {
             )}
         </Masonry>
         <Modal show={showModal} onHide={this.closeModal}>
-          <Modal.Body>
+          <Modal.Body bsStyle="modal-body">
             <div style={{ float: 'right' }}>
               <img src={modalBook.image} role="presentation" />
             </div>
@@ -88,74 +90,107 @@ class BookGrid extends React.Component {
             <p>{modalBook.author}</p>
             <br />
             {addBook && (
-                  <Button onClick={() => addBook(modalBook)} bsStyle="primary">
-                    Add Book
-                  </Button>
+                  <div>
+                    <Button
+                      onClick={() => addBook(modalBook)}
+                      bsStyle="primary"
+                    >
+                      Add Book
+                    </Button>
+                  </div>
                 )}
             {removeBook && (
-                  <Button
-                    onClick={() => removeBook(modalBook)}
-                    bsStyle="primary"
-                  >
-                    Remove Book
-                  </Button>
+                  <div>
+                    <Button
+                      onClick={() => removeBook(modalBook)}
+                      bsStyle="primary"
+                    >
+                      Remove Book
+                    </Button>
+                  </div>
                 )}
             {confirmRequest && (
-                  <Button
-                    onClick={
-                      () => this.closeModal(() => confirmRequest(modalBook))
-                    }
-                    bsStyle="primary"
-                  >
-                    Confirm Request
-                  </Button>
+                  <div>
+                    <UserInfo
+                      user={modalBook.requestedBy[0]}
+                      message={'Requested by'}
+                    />
+                    <Button
+                      onClick={
+                        () => this.closeModal(() => confirmRequest(modalBook))
+                      }
+                      bsStyle="primary"
+                    >
+                      Confirm Request
+                    </Button>
+                  </div>
                 )}
             {confirmReturn && (
-                  <Button
-                    onClick={
-                      () => this.closeModal(() => confirmReturn(modalBook))
-                    }
-                    bsStyle="primary"
-                  >
-                    Confirm Book Return
-                  </Button>
+                  <div>
+                    <UserInfo user={modalBook.lentTo} message={'Returned by'} />
+                    <Button
+                      onClick={
+                        () => this.closeModal(() => confirmReturn(modalBook))
+                      }
+                      bsStyle="primary"
+                    >
+                      Confirm Book Return
+                    </Button>
+                  </div>
                 )}
-            {
-              requestBook &&
-                (isAuthenticated
-                  ? modalBook.requestedBy.filter(r => r.id === userId).length
-                    ? (
-                      <Button disabled bsStyle="primary">
-                        You have requested this book
-                      </Button>
-                    )
-                    : (
-                      <Button
-                        onClick={
-                          () => this.closeModal(() => requestBook(modalBook))
-                        }
-                        bsStyle="primary"
-                      >
-                        Request Book
-                      </Button>
-                    )
-                  : (
+            {requestBook && (isAuthenticated ? (
+                    <div>
+                      <UserInfo user={modalBook.owner} message={'Owned by'} />
+                      {
+                        modalBook.requestedBy.filter(
+                          r => r.userId === userId,
+                        ).length
+                          ? (
+                            <Button disabled bsStyle="primary">
+                              You have requested this book
+                            </Button>
+                          )
+                          : (
+                            <Button
+                              onClick={
+                                () =>
+                                  this.closeModal(() => requestBook(modalBook))
+                              }
+                              bsStyle="primary"
+                            >
+                              Request Book
+                            </Button>
+                          )
+                      }
+                    </div>
+                  ) : (
                     <Button disabled bsStyle="primary">
                       Log in to Request Book
                     </Button>
-                  ))
-            }
+                  ))}
             {cancelRequest && (
                   <div>
                     {
                       requestBook &&
                         !modalBook.requestedBy.filter(
-                          r => r.id === userId,
+                          r => r.userId === userId,
                         ).length
                         ? <div></div>
                         : (
                           <div>
-                            <div style={{ height: '7px' }}></div>
+                            {
+                              modalBook.owner.userId !== userId &&
+                                !modalBook.requestedBy.filter(
+                                  r => r.userId === userId,
+                                ).length
+                                ? (
+                                  <UserInfo
+                                    user={modalBook.owner}
+                                    message={'Owned by'}
+                                  />
+                                )
+                                : <div style={{ height: '7px' }}></div>
+                            }
                             <Button
                               onClick={
                                 () =>
@@ -172,13 +207,20 @@ class BookGrid extends React.Component {
                     }
                   </div>
                 )}
-            <div style={{ height: '180px' }}></div>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={this.prevBook} bsStyle="success">
+            <Button
+              onClick={this.prevBook}
+              bsStyle="success"
+              disabled={numBooks === 1}
+            >
               <Glyphicon glyph="backward" aria-hidden="true" />Prev
             </Button>
-            <Button onClick={this.nextBook} bsStyle="success">
+            <Button
+              onClick={this.nextBook}
+              bsStyle="success"
+              disabled={numBooks === 1}
+            >
                Next <Glyphicon glyph="forward" aria-hidden="true" />
             </Button>
             <Button onClick={this.closeModal}>

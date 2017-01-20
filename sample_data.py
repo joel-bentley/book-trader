@@ -1,30 +1,30 @@
 
 sample_users = [
     {
-        "id": 1,
-        "twitter_id": '111',
-        "twitter_name": 'Tester1',
-        "full_name": 'Test Tester 1',
-        "location": {'city': 'Ann Arbor', 'state': 'MI'}
+        'id': 1,
+        'twitter_id': '111',
+        'twitter_name': 'Tester1',
+        'full_name': 'Test Tester 1',
+        'location': {'city': 'Ann Arbor', 'state': 'MI'}
     },
     {
-        "id": 2,
-        "twitter_id": '222',
-        "twitter_name": 'Tester2',
-        "full_name": 'Test Tester 2',
-        "location": {'city': 'Ann Arbor', 'state': 'MI'}
+        'id': 2,
+        'twitter_id': '222',
+        'twitter_name': 'Tester2',
+        'full_name': 'Test Tester 2',
+        'location': {'city': 'Ann Arbor', 'state': 'MI'}
     },
     {
-        "id": 3,
-        "twitter_id": '948889321',
-        "twitter_name": 'JoelBentley7',
-        "full_name": 'Joel Bentley',
-        "location": {'city': 'Ann Arbor', 'state': 'MI'}
+        'id': 3,
+        'twitter_id': '948889321',
+        'twitter_name': 'JoelBentley7',
+        'full_name': 'Joel Bentley',
+        'location': {'city': 'Ann Arbor', 'state': 'MI'}
     }
 ]
 
 sample_books = [{'book_id': 'QGhkQ',
-                 'olid': 'OL16009269W',
+                 'olid': 'OL24912926M',
                  'title': 'The Hunger Games',
                  'subtitle': '',
                  'author': 'Suzanne Collins',
@@ -40,7 +40,7 @@ sample_books = [{'book_id': 'QGhkQ',
                  'requested_by': [],
                  'lentTo': None},
                 {'book_id': 'QGhkr',
-                 'olid': 'OL15936512W',
+                 'olid': 'OL24842593M',
                  'title': 'Ready Player One',
                  'subtitle': '',
                  'author': 'Ernest Cline',
@@ -48,9 +48,9 @@ sample_books = [{'book_id': 'QGhkQ',
                  'requested_by': [1, 3],
                  'lentTo': None},
                 {'book_id': 'bbd2K',
-                 'olid': 'OL35628W',
-                 'title': 'Dawn',
-                 'subtitle': 'Book One of the Xenogenesis Series',
+                 'olid': 'OL24767475M',
+                 'title': 'Xenogenesis',
+                 'subtitle': '',
                  'author': 'Octavia E. Butler',
                  'owner_id': 2,
                  'requested_by': [],
@@ -64,7 +64,7 @@ sample_books = [{'book_id': 'QGhkQ',
                  'requested_by': [1, 2],
                  'lentTo': None},
                 {'book_id': 'bad3K',
-                 'olid': 'OL893527W',
+                 'olid': 'OL7470646M',
                  'title': 'Dune',
                  'subtitle': '',
                  'author': 'Frank Herbert',

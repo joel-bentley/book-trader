@@ -16,3 +16,7 @@
   height: auto;
   border-radius: 7px;
 }
+
+.modal-body {
+  min-height: 340px;
+}

@@ -11,7 +11,7 @@ const searchBooks = searchText => {
   console.log({ searchText });
 
   return axios
-    .get(`https://openlibrary.org/search.json?title=${searchText}&limit=10`)
+    .get(`https://openlibrary.org/search.json?title=${searchText}&limit=20`)
     .then(res => {
       return res.data.docs
         .filter(book => {
@@ -47,8 +47,10 @@ class AddBooks extends React.Component {
     const { searchTerm, searchResults, loading } = this.state;
     return (
       <div>
+        <h3>Search to add books you own</h3>
+        <br />
         <ControlledInput
-          placeholder="Search Terms"
+          placeholder="Search by title"
           onSubmit={this.handleSearchSubmit}
           buttonText="Search"
         />

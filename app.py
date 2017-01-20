@@ -172,7 +172,7 @@ def getBooks():
         else:
             lent_to = None
 
-        books.append({'book_id': book.book_id,
+        books.append({'bookId': book.book_id,
                       'title': book.title,
                       'subtitle': book.subtitle,
                       'author': book.author,
