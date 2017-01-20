@@ -342,7 +342,7 @@ class App extends React.Component {
                           <div className="text-center">
                             <p>No books here</p>
                           </div>
-                        ) : <BookGrid books={myBooksRequested} userId={userId} confirmRequest={this.confirmRequest} cancelRequest={this.cancelRequest} />}
+                        ) : <BookGrid books={myBooksRequested} confirmRequest={this.confirmRequest} cancelRequest={this.cancelRequest} {...{ userId }} />}
                   </div>
                 );
               }}
