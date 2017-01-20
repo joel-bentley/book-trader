@@ -118,7 +118,8 @@ def create_tables():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if twitter_token in session:
+        # if twitter_token in session:
+        if user_id in session:
             return jsonify({'error': 'You must be logged in first.'})
         return f(*args, **kwargs)
     return decorated_function
@@ -186,16 +187,45 @@ def getBooks():
                       'requestedBy': book_requests})
     return jsonify(books)
 
-    # {'book_id': 'bad3K',
-    #              'olid': 'OL893527W',
-    #              'title': 'Dune',
-    #              'subtitle': '',
-    #              'author': 'Frank Herbert',
-    #              'owner_id': 3,
-    #              'requested_by': [1]
+
+@app.route('/api/profile', methods=['PUT'])
+#@login_required
+def editProfile():
+    data = request.json
+    # user_id = session.get('user_id')
+    user_id = 3
+
+    user = User.query.get(user_id)
+    full_name = data.get('fullName')
+    location = data.get('location')
+    if full_name:
+        user.full_name = full_name
+    if location:
+        user.location.city = location['city']
+        user.location.state = location['state']
+    db.session.commit()
+    return jsonify(data)
 
 
-### ROUTE ###
+@app.route('/api/book', methods=['POST'])
+#@login_required
+def postBook():
+    data = request.json
+    # user_id = session.get('user_id')
+    user_id = 3
+
+    new_book = Book(book_id=data['bookId'],
+                    olid=data['olid'],
+                    title=data['title'],
+                    subtitle=data['subtitle'],
+                    author=data['author'],
+                    owner_id=user_id)
+    db.session.add(new_book)
+    db.session.commit()
+    return jsonify(data)
+
+### INDEX ROUTE ###
+
 
 @app.route('/')
 def home():

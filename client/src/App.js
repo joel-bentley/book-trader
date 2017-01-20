@@ -15,6 +15,17 @@ const API = '/api';
 const getProfile = () => axios.get(`${API}/profile`);
 const getBooks = () => axios.get(`${API}/books`);
 
+const editProfile = data => axios.put(`${API}/profile`, data);
+const postBook = book => axios.post(`${API}/book`, book);
+const deleteBook = bookId => axios.delete(`${API}/book`, { bookId });
+
+const postRequest = bookId => axios.post(`${API}/request`, { bookId });
+const postConfirmRequest = (bookId, requesterId) =>
+  axios.post(`${API}/request/confirm`, { bookId, requesterId });
+const postCancelRequest = (bookId, requesterId) =>
+  axios.post(`${API}/request/cancel`, { bookId, requesterId });
+const postReturn = bookId => axios.post(`${API}/return`, { bookId });
+
 const BOOK_ID_LENGTH = 5;
 const BOOK_ID_CHAR = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789';
 
@@ -80,10 +91,6 @@ class App extends React.Component {
       .catch(err => console.log('error:', err));
   };
 
-  profileUpdate = newState => {
-    this.setState(newState);
-  };
-
   showAlert = message => {
     this.setState({ alertMessage: message }, () => {
       console.log({ message });
@@ -94,7 +101,20 @@ class App extends React.Component {
     });
   };
 
+  profileUpdate = newState => {
+    const { fullName, location } = this.state;
+    const currentStateCopy = { ...{ fullName, location } };
+    this.setState(newState);
+    editProfile(newState).catch(err => {
+      //set back to previous value on error
+      this.setState(currentStateCopy);
+      console.log('error:', err);
+    });
+  };
+
   addBook = newBook => {
+    const { books } = this.state;
+    const currentStateCopy = { ...{ books } };
     const moreProps = {
       bookId: generateRandomId(BOOK_ID_LENGTH, BOOK_ID_CHAR),
       owner: { userId: this.state.userId },
@@ -102,12 +122,23 @@ class App extends React.Component {
       lentTo: null,
     };
     newBook = { ...newBook, ...moreProps };
+
+    console.log(newBook);
+
     this.setState(
-      { books: [ ...this.state.books, newBook ] },
+      { books: [ ...books, newBook ] },
       this.showAlert(
         `"${newBook.title}" by ${newBook.author} added to 'My Books'.`,
       ),
     );
+    postBook(newBook).catch(err => {
+      //set back to previous value on error
+      this.setState(
+        currentStateCopy,
+        this.showAlert('Error while adding book'),
+      );
+      console.log('error:', err);
+    });
   };
 
   removeBook = book => {

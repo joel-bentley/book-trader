@@ -22,8 +22,8 @@ const searchBooks = searchText => {
         .map(book => {
           return {
             title: book.title_suggest,
-            subtitle: book.subtitle,
-            author: book.author_name,
+            subtitle: book.subtitle || null,
+            author: book.author_name[0],
             olid: book.cover_edition_key,
             image: `http://covers.openlibrary.org/b/olid/${book.cover_edition_key}-M.jpg`,
           };
