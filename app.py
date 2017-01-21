@@ -33,8 +33,6 @@ def get_twitter_token(token=None):
 
 db = SQLAlchemy(app)
 
-#import models
-
 requested_by = db.Table('requested_by',
                         db.Column('user_id', db.Integer,
                                   db.ForeignKey('users.id')),
@@ -85,13 +83,15 @@ class Token(db.Model):
     oauth_token_secret = db.Column(db.String(120))
 
 
-#@app.before_first_request
-@app.route('/reset')
+@app.before_first_request
+# @app.route('/reset')
 def create_tables():
-    db.drop_all()
+    # db.drop_all()
     db.create_all()
     # If empty database
-    if True:
+    users = User.query.all()
+    books = Book.query.all()
+    if not users and not books:
         from sample_data import sample_users, sample_books
         for user in sample_users:
             new_user = User(twitter_id=user['twitter_id'],
@@ -117,7 +117,7 @@ def create_tables():
             db.session.add(new_book)
             db.session.commit()
 
-    return jsonify({'message': 'Reset successful'})
+    # return jsonify({'message': 'Reset successful'})
 
 
 ### LOGIN DECORATOR ###
@@ -134,7 +134,6 @@ def login_required(f):
 ### API ROUTES ###
 
 @app.route('/api/profile', methods=['GET'])
-#@login_required
 def getProfile():
     user_id = session.get('user_id')
 
@@ -150,26 +149,36 @@ def getProfile():
 
 
 @app.route('/api/books', methods=['GET'])
-#@login_required
 def getBooks():
+    user_id = session.get('user_id')
     books = []
     for book in Book.query.all():
-        book_requests = [{'userId': user.id,
-                          'twitterName': user.twitter_name,
-                          'fullName': user.full_name,
-                          'location': {'city': user.location.city,
-                                       'state': user.location.state}}
-                         for user in book.requested_by]
-        owner = User.query.get(book.owner_id)
-        borrower_id = book.lent_to
-        if borrower_id:
-            borrower = User.query.get(borrower_id)
-            lent_to = {'userId': borrower.id,
-                       'twitterName': borrower.twitter_name,
-                       'fullName': borrower.full_name,
-                       'location': {'city': borrower.location.city,
-                                    'state': borrower.location.state}}
+        if user_id:
+            book_requests = [{'userId': user.id,
+                              'twitterName': user.twitter_name,
+                              'fullName': user.full_name,
+                              'location': {'city': user.location.city,
+                                           'state': user.location.state}}
+                             for user in book.requested_by]
+            owner = User.query.get(book.owner_id)
+            owner_info = {'userId': owner.id,
+                          'twitterName': owner.twitter_name,
+                          'fullName': owner.full_name,
+                          'location': {'city': owner.location.city,
+                                       'state': owner.location.state}}
+            borrower_id = book.lent_to
+            if borrower_id:
+                borrower = User.query.get(borrower_id)
+                lent_to = {'userId': borrower.id,
+                           'twitterName': borrower.twitter_name,
+                           'fullName': borrower.full_name,
+                           'location': {'city': borrower.location.city,
+                                        'state': borrower.location.state}}
+            else:
+                lent_to = None
         else:
+            book_requests = []
+            owner_info = {'userId': 0}
             lent_to = None
 
         books.append({'bookId': book.book_id,
@@ -177,11 +186,7 @@ def getBooks():
                       'subtitle': book.subtitle,
                       'author': book.author,
                       'olid': book.olid,
-                      'owner': {'userId': owner.id,
-                                'twitterName': owner.twitter_name,
-                                'fullName': owner.full_name,
-                                'location': {'city': owner.location.city,
-                                             'state': owner.location.state}},
+                      'owner': owner_info,
                       'lentTo': lent_to,
                       'requestedBy': book_requests})
     return jsonify(books)
