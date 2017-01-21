@@ -289,8 +289,7 @@ class App extends React.Component {
       location,
     } = this.state;
 
-    const isAuthenticated = true;
-    // displayName !== ''
+    const isAuthenticated = displayName !== '';
     const myBooks = books.filter(b => b.owner.userId === userId);
     const numRequests = myBooks.length ? myBooks
         .map(b => b.requestedBy.length)

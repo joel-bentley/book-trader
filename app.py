@@ -1,16 +1,12 @@
 import os
 from flask import Flask
 from flask import jsonify, redirect, request, send_from_directory, session, url_for
-from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_oauthlib.client import OAuth
 from functools import wraps
 
 app = Flask(__name__, static_folder='client/build', static_url_path='')
 app.config.from_object(os.environ['APP_SETTINGS'])
-
-SESSION_TYPE = 'redis'
-Session(app)
 
 
 ### OAUTH ###
@@ -28,15 +24,16 @@ twitter = oauth.remote_app(name='twitter',
 
 @twitter.tokengetter
 def get_twitter_token(token=None):
-    return session.get('twitter_token')
+    user = User.query.filter_by(twitter_id=twitter_id).first()
+    twitter_token = Token.query.filter_by(user=user, name='Twitter').first()
+    return (twitter_token.oauth_token, twitter_token.oauth_token_secret)
 
 
 ### DATABASE ###
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
-#from models import User, Book
+#import models
 
 requested_by = db.Table('requested_by',
                         db.Column('user_id', db.Integer,
@@ -69,6 +66,7 @@ class User(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('locations.id'))
     location = db.relationship(
         'Location', backref=db.backref('users', uselist=False))
+    tokens = db.relationship('Token', backref='user', lazy='dynamic')
 
 
 class Location(db.Model):
@@ -78,7 +76,16 @@ class Location(db.Model):
     state = db.Column(db.String(80))
 
 
-# @app.before_first_request
+class Token(db.Model):
+    __tablename__ = 'tokens'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    name = db.Column(db.String(40))
+    oauth_token = db.Column(db.String(120))
+    oauth_token_secret = db.Column(db.String(120))
+
+
+#@app.before_first_request
 @app.route('/reset')
 def create_tables():
     db.drop_all()
@@ -118,8 +125,7 @@ def create_tables():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # if twitter_token in session:
-        if user_id in session:
+        if 'user_id' in session:
             return jsonify({'error': 'You must be logged in first.'})
         return f(*args, **kwargs)
     return decorated_function
@@ -130,14 +136,7 @@ def login_required(f):
 @app.route('/api/profile', methods=['GET'])
 #@login_required
 def getProfile():
-    # user_id = session.get('user_id')
-    # twitter_id = session.get('twitter_id')
-    user_id = 3
-    # twitter_id = '948889321'
-
-    # full_name and location found in Database using user_id
-    # full_name = 'Joel Bentley'
-    # location = {'city': 'Ann Arbor', 'state': 'MI'}
+    user_id = session.get('user_id')
 
     if user_id:
         user = User.query.filter_by(id=user_id).first()
@@ -189,11 +188,10 @@ def getBooks():
 
 
 @app.route('/api/profile', methods=['PUT'])
-#@login_required
+@login_required
 def editProfile():
     data = request.json
-    # user_id = session.get('user_id')
-    user_id = 3
+    user_id = session.get('user_id')
 
     user = User.query.get(user_id)
     full_name = data.get('fullName')
@@ -208,11 +206,10 @@ def editProfile():
 
 
 @app.route('/api/book', methods=['POST'])
-#@login_required
+@login_required
 def postBook():
     data = request.json
-    # user_id = session.get('user_id')
-    user_id = 3
+    user_id = session.get('user_id')
 
     new_book = Book(book_id=data['bookId'],
                     olid=data['olid'],
@@ -226,11 +223,10 @@ def postBook():
 
 
 @app.route('/api/book/remove', methods=['PUT'])
-#@login_required
+@login_required
 def deleteBook():
     data = request.json
-    # user_id = session.get('user_id')
-    user_id = 3
+    user_id = session.get('user_id')
     book_id = data['bookId']
 
     book = Book.query.filter_by(book_id=book_id).first()
@@ -240,11 +236,10 @@ def deleteBook():
 
 
 @app.route('/api/request', methods=['POST'])
-#@login_required
+@login_required
 def postRequest():
     data = request.json
-    # user_id = session.get('user_id')
-    user_id = 3
+    user_id = session.get('user_id')
     book_id = data['bookId']
 
     user = User.query.get(user_id)
@@ -257,11 +252,10 @@ def postRequest():
 
 
 @app.route('/api/request/confirm', methods=['POST'])
-#@login_required
+@login_required
 def postConfirmRequest():
     data = request.json
-    # user_id = session.get('user_id')
-    user_id = 3
+    user_id = session.get('user_id')
 
     book_id = data['bookId']
     requester_id = data['requesterId']
@@ -277,11 +271,10 @@ def postConfirmRequest():
 
 
 @app.route('/api/request/cancel', methods=['POST'])
-#@login_required
+@login_required
 def postCancelRequest():
     data = request.json
-    # user_id = session.get('user_id')
-    user_id = 3
+    user_id = session.get('user_id')
 
     book_id = data['bookId']
     requester_id = data['requesterId']
@@ -296,11 +289,10 @@ def postCancelRequest():
 
 
 @app.route('/api/return', methods=['POST'])
-#@login_required
+@login_required
 def postReturn():
     data = request.json
-    # user_id = session.get('user_id')
-    user_id = 3
+    user_id = session.get('user_id')
 
     book_id = data['bookId']
     book = Book.query.filter_by(book_id=book_id).first()
@@ -316,6 +308,11 @@ def postReturn():
 
 
 @app.route('/')
+@app.route('/mybooks')
+@app.route('/addbooks')
+@app.route('/requests')
+@app.route('/profile')
+@app.route('/login')
 def home():
     """Route for html file with single page React app."""
     return send_from_directory(app.static_folder, 'index.html')
@@ -342,13 +339,8 @@ def twitter_auth_callback():
 
     twitter_name = resp['screen_name']
     twitter_id = resp['user_id']
-
-    session['twitter_token'] = (
-        resp['oauth_token'],
-        resp['oauth_token_secret']
-    )
-    session['twitter_name'] = twitter_name
-    session['twitter_id'] = twitter_id
+    oauth_token = resp['oauth_token']
+    oauth_token_secret = resp['oauth_token_secret']
 
     user = User.query.filter_by(twitter_id=twitter_id).first()
 
@@ -357,23 +349,39 @@ def twitter_auth_callback():
         if user.twitter_name != twitter_name:
             user.twitter_name = twitter_name
             db.session.commit()
+        twitter_token = Token.query.filter_by(
+            user=user, name='Twitter').first()
+
     else:
         new_user = User(twitter_id=twitter_id, twitter_name=twitter_name)
         db.session.add(new_user)
         db.session.commit()
 
-    user_id = User.query.filter_by(twitter_id=twitter_id).first().id
-    session['user_id'] = user_id
+    user = User.query.filter_by(twitter_id=twitter_id).first()
+    twitter_token = Token.query.filter_by(user=user, name='Twitter').first()
+    if twitter_token:
+        twitter_token.oauth_token = oauth_token
+        twitter_token.oauth_token_secret = oauth_token_secret
+        db.session.commit()
+    else:
+        twitter_token = Token(name='Twitter', oauth_token=oauth_token,
+                              oauth_token_secret=oauth_token_secret, user=user)
+        db.session.add(twitter_token)
+        db.session.commit()
 
+    session['user_id'] = user.id
     return redirect(next_url)
 
 
 @app.route('/logout')
 def logout():
-    """Logout by removing session keys."""
-    session.pop('twitter_token', None)
-    session.pop('twitter_name', None)
-    session.pop('twitter_id', None)
+    """Logout by removing session keys and all tokens from database"""
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    tokens = Token.query.filter_by(user=user).all()
+    for token in tokens:
+        db.session.delete(token)
+    db.session.commit()
     session.pop('user_id', None)
     return redirect(url_for('home'))
 
