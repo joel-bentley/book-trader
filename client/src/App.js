@@ -303,11 +303,9 @@ class App extends React.Component {
         <div className="container">
           {isAuthenticated && (
                 <div>
-                  {alertMessage ? (
-                        <Alert bsStyle="success">
-                          <strong>{alertMessage}</strong>
-                        </Alert>
-                      ) : <div style={{ height: '69px' }}></div>}
+                  {alertMessage ? <Alert bsStyle="success">
+                        <strong>{alertMessage}</strong>
+                      </Alert> : <div style={{ height: '69px' }} />}
                 </div>
               )}
           <Match
@@ -321,26 +319,22 @@ class App extends React.Component {
                 return (
                   <div>
                     {!isAuthenticated && <Intro />}
-                    {availableBooks.length === 0 ? (
-                          <div className="text-center">
-                            <br />
-                            <p>
-                              Sorry, no books are currently available for you to borrow.
-                            </p>
-                            <p>Ask your friends to join and add their books!</p>
-                          </div>
-                        ) : (
-                          <div>
-                            <h3>Books currently available</h3>
-                            <br />
-                            <BookGrid
-                              books={availableBooks}
-                              requestBook={this.requestBook}
-                              cancelRequest={this.cancelRequest}
-                              {...{ isAuthenticated, userId }}
-                            />
-                          </div>
-                        )}
+                    {availableBooks.length === 0 ? <div className="text-center">
+                          <br />
+                          <p>
+                            Sorry, no books are currently available for you to borrow.
+                          </p>
+                          <p>Ask your friends to join and add their books!</p>
+                        </div> : <div>
+                          <h3>Books currently available</h3>
+                          <br />
+                          <BookGrid
+                            books={availableBooks}
+                            requestBook={this.requestBook}
+                            cancelRequest={this.cancelRequest}
+                            {...{ isAuthenticated, userId }}
+                          />
+                        </div>}
                   </div>
                 );
               }}
@@ -362,35 +356,37 @@ class App extends React.Component {
                   <div>
                     <h3>My Books (On Shelf)</h3>
                     <br />
-                    {myUnlentBooks.length === 0 ? (
-                          <div className="text-center">
-                            <p>No books here</p>
-                          </div>
-                        ) : <BookGrid books={myUnlentBooks} removeBook={this.removeBook} />}
+                    {myUnlentBooks.length === 0 ? <div className="text-center">
+                          <p>No books here</p>
+                        </div> : <BookGrid
+                          books={myUnlentBooks}
+                          removeBook={this.removeBook}
+                        />}
                     <hr />
                     <h3>Books I have Borrowed</h3>
                     <br />
-                    {booksBorrowed.length === 0 ? (
-                          <div className="text-center">
-                            <p>No books here</p>
-                          </div>
-                        ) : <BookGrid books={booksBorrowed} />}
+                    {booksBorrowed.length === 0 ? <div className="text-center">
+                          <p>No books here</p>
+                        </div> : <BookGrid books={booksBorrowed} />}
                     <hr />
                     <h3>My Books (Lent Out)</h3>
                     <br />
-                    {myLentBooks.length === 0 ? (
-                          <div className="text-center">
-                            <p>No books here</p>
-                          </div>
-                        ) : <BookGrid books={myLentBooks} confirmReturn={this.confirmReturn} />}
+                    {myLentBooks.length === 0 ? <div className="text-center">
+                          <p>No books here</p>
+                        </div> : <BookGrid
+                          books={myLentBooks}
+                          confirmReturn={this.confirmReturn}
+                        />}
                     <hr />
                     <h3>Books I have Requested</h3>
                     <br />
-                    {requestedBooks.length === 0 ? (
-                          <div className="text-center">
-                            <p>No books here</p>
-                          </div>
-                        ) : <BookGrid books={requestedBooks} cancelRequest={this.cancelRequest} {...{ userId }} />}
+                    {requestedBooks.length === 0 ? <div className="text-center">
+                          <p>No books here</p>
+                        </div> : <BookGrid
+                          books={requestedBooks}
+                          cancelRequest={this.cancelRequest}
+                          {...{ userId }}
+                        />}
                   </div>
                 );
               }}
@@ -420,11 +416,18 @@ class App extends React.Component {
                   <div>
                     <h3>Click on books to confirm requests</h3>
                     <br />
-                    {myBooksRequested.length === 0 ? (
-                          <div className="text-center">
-                            <p>No books here</p>
-                          </div>
-                        ) : <BookGrid books={myBooksRequested} confirmRequest={this.confirmRequest} cancelRequest={this.cancelRequest} {...{ userId }} />}
+                    {
+                      myBooksRequested.length === 0
+                        ? <div className="text-center">
+                          <p>No books here</p>
+                        </div>
+                        : <BookGrid
+                          books={myBooksRequested}
+                          confirmRequest={this.confirmRequest}
+                          cancelRequest={this.cancelRequest}
+                          {...{ userId }}
+                        />
+                    }
                   </div>
                 );
               }}

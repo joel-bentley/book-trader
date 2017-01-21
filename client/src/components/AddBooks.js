@@ -68,12 +68,10 @@ class AddBooks extends React.Component {
                 {
                   searchResults.length === 0
                     ? <p>None found.</p>
-                    : (
-                      <BookGrid
-                        books={searchResults}
-                        addBook={this.props.addBook}
-                      />
-                    )
+                    : <BookGrid
+                      books={searchResults}
+                      addBook={this.props.addBook}
+                    />
                 }
               </div>
             )}

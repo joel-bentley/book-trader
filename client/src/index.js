@@ -5,10 +5,8 @@ import App from './App';
 import './index.css';
 
 ReactDOM.render(
-  (
-    <BrowserRouter>
-      {({ router }) => <App {...{ router }} />}
-    </BrowserRouter>
-  ),
+  <BrowserRouter>
+    {({ router }) => <App {...{ router }} />}
+  </BrowserRouter>,
   document.getElementById('root'),
 );

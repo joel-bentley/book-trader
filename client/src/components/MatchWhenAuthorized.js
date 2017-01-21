@@ -10,11 +10,9 @@ const MatchWhenAuthorized = (
       props =>
         isAuthenticated
           ? <Component {...props} />
-          : (
-            <Redirect
-              to={{ pathname: '/login', state: { referrer: props.location } }}
-            />
-          )
+          : <Redirect
+            to={{ pathname: '/login', state: { referrer: props.location } }}
+          />
     }
   />
 );
