@@ -9,12 +9,32 @@ import {
   NavItem,
 } from 'react-bootstrap';
 
-const NavigationBar = (
-  { router, isAuthenticated, displayName, avatar, numRequests },
-) =>
-  {
+class NavigationBar extends React.Component {
+  state = { expanded: false };
+
+  toggle = () => {
+    this.setState(prevState => ({ expanded: !prevState.expanded }));
+  };
+
+  close = () => {
+    this.setState({ expanded: false });
+  };
+
+  render() {
+    const {
+      router,
+      isAuthenticated,
+      displayName,
+      avatar,
+      numRequests,
+    } = this.props;
     return (
-      <Navbar fixedTop>
+      <Navbar
+        fixedTop
+        onToggle={this.toggle}
+        expanded={this.state.expanded}
+        collapseOnSelect
+      >
         <Navbar.Header>
           <Navbar.Brand>
             <Link to="/">
@@ -28,7 +48,12 @@ const NavigationBar = (
           <Nav>
             <Link to="/">
               {({ href, onClick }) => (
-                  <NavItem href={href} onClick={onClick} eventKey={1}>
+                  <NavItem
+                    href={href}
+                    onClick={onClick}
+                    onSelect={this.close}
+                    eventKey={1}
+                  >
                     Home
                   </NavItem>
                 )}
@@ -36,7 +61,12 @@ const NavigationBar = (
             {isAuthenticated && (
                   <Link to="/mybooks">
                     {({ href, onClick }) => (
-                        <NavItem href={href} onClick={onClick} eventKey={2}>
+                        <NavItem
+                          href={href}
+                          onClick={onClick}
+                          onSelect={this.close}
+                          eventKey={2}
+                        >
                           My Books
                         </NavItem>
                       )}
@@ -45,7 +75,12 @@ const NavigationBar = (
             {isAuthenticated && (
                   <Link to="/addbooks">
                     {({ href, onClick }) => (
-                        <NavItem href={href} onClick={onClick} eventKey={3}>
+                        <NavItem
+                          href={href}
+                          onClick={onClick}
+                          onSelect={this.close}
+                          eventKey={3}
+                        >
                           Add Books
                         </NavItem>
                       )}
@@ -54,7 +89,12 @@ const NavigationBar = (
             {isAuthenticated && (
                   <Link to="/requests">
                     {({ href, onClick }) => (
-                        <NavItem href={href} onClick={onClick} eventKey={4}>
+                        <NavItem
+                          href={href}
+                          onClick={onClick}
+                          onSelect={this.close}
+                          eventKey={4}
+                        >
                           {`Book Requests (${numRequests})`}
                         </NavItem>
                       )}
@@ -86,18 +126,22 @@ const NavigationBar = (
                     Logout
                   </MenuItem>
                 </NavDropdown> : <Link to="/login">
-                  {
-                    ({ href, onClick }) => (
-                      <NavItem href={href} onClick={onClick} eventKey={5}>
-                         Login
+                  {({ href, onClick }) => (
+                      <NavItem
+                        href={href}
+                        onClick={onClick}
+                        onSelect={this.close}
+                        eventKey={5}
+                      >
+                        Login
                       </NavItem>
-                    )
-                  }
+                    )}
                 </Link>}
           </Nav>
         </Navbar.Collapse>
       </Navbar>
     );
-  };
+  }
+}
 
 export default NavigationBar;
