@@ -96,7 +96,7 @@ class App extends React.Component {
       console.log({ message });
       this.alertTimeoutId = setTimeout(
         () => this.setState({ alertMessage: '' }),
-        5000,
+        2000,
       );
     });
   };
@@ -305,7 +305,7 @@ class App extends React.Component {
                 <div>
                   {alertMessage ? <Alert bsStyle="success">
                         <strong>{alertMessage}</strong>
-                      </Alert> : <div style={{ height: '69px' }} />}
+                      </Alert> : <div style={{ height: '48px' }} />}
                 </div>
               )}
           <Match
