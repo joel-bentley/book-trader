@@ -1,27 +1,26 @@
 import React from 'react';
-// import { Glyphicon } from 'react-bootstrap'
+import { Nav, NavItem } from 'react-bootstrap';
 import axios from 'axios';
 
 import ControlledInput from './ControlledInput';
 import BookGrid from './BookGrid';
 
-const searchBooks = searchText => {
+const searchBooks = (searchText, method) => {
   searchText = searchText.replace(/[^0-9a-zA-Z$-_.+!*'(),]+/g, '+');
-
   console.log({ searchText });
 
   return axios
-    .get(`https://openlibrary.org/search.json?title=${searchText}&limit=20`)
+    .get(`https://openlibrary.org/search.json?${method}=${searchText}&limit=20`)
     .then(res => {
       return res.data.docs
         .filter(book => {
-          return book.hasOwnProperty('title_suggest') &&
+          return book.hasOwnProperty('title') &&
             book.hasOwnProperty('author_name') &&
             book.hasOwnProperty('cover_edition_key');
         })
         .map(book => {
           return {
-            title: book.title_suggest,
+            title: book.title,
             subtitle: book.subtitle || null,
             author: book.author_name[0],
             olid: book.cover_edition_key,
@@ -32,26 +31,46 @@ const searchBooks = searchText => {
 };
 
 class AddBooks extends React.Component {
-  state = { searchTerm: '', searchResults: [], loading: false };
+  state = {
+    searchTerm: '',
+    searchResults: [],
+    searchMethod: 'q',
+    loading: false,
+  };
 
-  handleSearchSubmit = searchTerm => {
+  handleSearchSubmit = (searchTerm, method) => {
     this.setState({ loading: true });
-    searchBooks(searchTerm)
+    searchBooks(searchTerm, method)
       .then(searchResults => {
         this.setState({ searchTerm, searchResults, loading: false });
       })
       .catch(err => console.log('error:', err));
   };
 
+  handleSelect = eventKey => {
+    this.setState({ searchMethod: eventKey });
+  };
+
   render() {
-    const { searchTerm, searchResults, loading } = this.state;
+    const { searchTerm, searchResults, loading, searchMethod } = this.state;
     return (
       <div>
         <h3>Search to add books you own</h3>
         <br />
+        <Nav
+          bsStyle="tabs"
+          activeKey={searchMethod}
+          onSelect={this.handleSelect}
+        >
+          <NavItem eventKey="q">Keyword</NavItem>
+          <NavItem eventKey="title">Title</NavItem>
+          <NavItem eventKey="author">Author</NavItem>
+        </Nav>
         <ControlledInput
-          placeholder="Search by title"
-          onSubmit={this.handleSearchSubmit}
+          placeholder=""
+          onSubmit={
+            searchTerm => this.handleSearchSubmit(searchTerm, searchMethod)
+          }
           buttonText="Search"
         />
         {loading && (
