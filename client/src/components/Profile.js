@@ -1,5 +1,5 @@
 import React from 'react';
-import { Glyphicon } from 'react-bootstrap';
+import { Col, Glyphicon } from 'react-bootstrap';
 
 import ControlledInput from './ControlledInput';
 import './Profile.css';
@@ -22,7 +22,7 @@ class Profile extends React.Component {
     const { fullNameInput, cityInput, stateInput } = this.state;
 
     return (
-      <div>
+      <Col sm={4} smOffset={4} xsOffset={1}>
         <img src={avatar} role="presentation" />
         <h4>Twitter:</h4>
         <p>{twitterName}</p>
@@ -93,7 +93,7 @@ class Profile extends React.Component {
               />
             </p>
         }
-      </div>
+      </Col>
     );
   }
 }

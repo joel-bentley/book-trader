@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Glyphicon, Modal } from 'react-bootstrap';
+import { Button, Col, Glyphicon, Modal } from 'react-bootstrap';
 import Masonry from 'react-masonry-component';
 
 import UserInfo from './UserInfo';
@@ -71,17 +71,19 @@ class BookGrid extends React.Component {
 
     return (
       <div>
-        <Masonry options={{ transitionDuration: 0 }}>
-          {books.map((book, index) => (
-              <div
-                className="grid-item"
-                onClick={() => this.openModal(index)}
-                key={`book-${index}`}
-              >
-                <img src={book.image} role="presentation" />
-              </div>
-            ))}
-        </Masonry>
+        <Col xsOffset={1} smOffset={0}>
+          <Masonry options={{ transitionDuration: 0 }}>
+            {books.map((book, index) => (
+                <div
+                  className="grid-item"
+                  onClick={() => this.openModal(index)}
+                  key={`book-${index}`}
+                >
+                  <img src={book.image} role="presentation" />
+                </div>
+              ))}
+          </Masonry>
+        </Col>
         <Modal show={showModal} onHide={this.closeModal}>
           <Modal.Body bsStyle="modal-body">
             <div style={{ float: 'right' }}>
