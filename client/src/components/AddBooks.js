@@ -35,12 +35,19 @@ class AddBooks extends React.Component {
     searchTerm: '',
     searchResults: [],
     searchMethod: 'q',
+    searchMethodText: 'Keywords',
     loading: false,
   };
 
-  handleSearchSubmit = (searchTerm, method) => {
-    this.setState({ loading: true });
-    searchBooks(searchTerm, method)
+  handleSearchSubmit = searchTerm => {
+    const { searchMethod } = this.state;
+    const searchMethodText = {
+      q: 'Keywords',
+      title: 'Title',
+      author: 'Author',
+    }[searchMethod];
+    this.setState({ searchMethodText, loading: true });
+    searchBooks(searchTerm, searchMethod)
       .then(searchResults => {
         this.setState({ searchTerm, searchResults, loading: false });
       })
@@ -52,7 +59,13 @@ class AddBooks extends React.Component {
   };
 
   render() {
-    const { searchTerm, searchResults, loading, searchMethod } = this.state;
+    const {
+      searchTerm,
+      searchResults,
+      loading,
+      searchMethod,
+      searchMethodText,
+    } = this.state;
     return (
       <div>
         <h3>Search to add books you own</h3>
@@ -62,15 +75,13 @@ class AddBooks extends React.Component {
           activeKey={searchMethod}
           onSelect={this.handleSelect}
         >
-          <NavItem eventKey="q">Keyword</NavItem>
+          <NavItem eventKey="q">Keywords</NavItem>
           <NavItem eventKey="title">Title</NavItem>
           <NavItem eventKey="author">Author</NavItem>
         </Nav>
         <ControlledInput
           placeholder=""
-          onSubmit={
-            searchTerm => this.handleSearchSubmit(searchTerm, searchMethod)
-          }
+          onSubmit={this.handleSearchSubmit}
           buttonText="Search"
         />
         {loading && (
@@ -82,7 +93,7 @@ class AddBooks extends React.Component {
         {searchTerm && (
               <div>
                 <br /><br />
-                <h4>Search Term: {searchTerm}</h4>
+                <h4>Search by {searchMethodText}: {searchTerm}</h4>
                 <br /><br />
                 {
                   searchResults.length === 0
