@@ -16,6 +16,17 @@ const Login = ({ isAuthenticated }) => {
         />
         Sign in with Twitter
       </Button>
+      <br /><br />
+      <h4>OR</h4>
+      <br />
+      <Button bsStyle="primary" href={`${process.env.PUBLIC_URL}/auth/test1`}>
+        <img
+          src={`${process.env.PUBLIC_URL}/img/twitter-egg-icon.png`}
+          className="auth-logo"
+          role="presentation"
+        />
+        Sign in to Test Account
+      </Button>
     </div>;
 };
 

@@ -329,6 +329,15 @@ def home():
 def twitter_auth():
     return twitter.authorize(callback=url_for('twitter_auth_callback'), next=None)
 
+@app.route('/auth/test1')
+def test1_auth():
+    session['user_id'] = 1
+    return redirect(url_for('home'))
+
+@app.route('/auth/test2')
+def test2_auth():
+    session['user_id'] = 2
+    return redirect(url_for('home'))
 
 @app.route('/auth/twitter/callback')
 def twitter_auth_callback():
