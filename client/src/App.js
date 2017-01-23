@@ -44,7 +44,6 @@ class App extends React.Component {
   state = {
     userId: '',
     twitterName: '',
-    displayName: '',
     avatar: '',
     fullName: '',
     location: { city: '', state: '' },
@@ -65,16 +64,8 @@ class App extends React.Component {
       .then(res => {
         const { userId, twitterName, fullName, location } = res.data;
         const avatar = `https://twitter.com/${twitterName}/profile_image?size=normal`;
-        const displayName = fullName || twitterName;
-        if (displayName !== '') {
-          this.setState({
-            userId,
-            twitterName,
-            fullName,
-            displayName,
-            avatar,
-            location,
-          });
+        if (twitterName !== '') {
+          this.setState({ userId, twitterName, fullName, avatar, location });
         }
       })
       .catch(err => console.log('error:', err));
@@ -281,7 +272,6 @@ class App extends React.Component {
     const {
       alertMessage,
       books,
-      displayName,
       userId,
       twitterName,
       avatar,
@@ -289,7 +279,9 @@ class App extends React.Component {
       location,
     } = this.state;
 
-    const isAuthenticated = displayName !== '';
+    const displayName = fullName || twitterName;
+    const isAuthenticated = twitterName !== '';
+
     const myBooks = books.filter(b => b.owner.userId === userId);
     const numRequests = myBooks.length ? myBooks
         .map(b => b.requestedBy.length)
