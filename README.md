@@ -1,5 +1,6 @@
 #book-trader
 Built for Book Trading Club challenge on Free Code Camp.
+
 (Python / Flask / OAuth / PostgreSQL / React / React Router)
 
 **Live Demo:** https://joel-bentley-book-trader.herokuapp.com/
@@ -20,7 +21,7 @@ User story requirements for this project: (<https://www.freecodecamp.com/challen
 
 To use, first log in to your Twitter account and create Twitter app at `apps.twitter.com`.
 
-Set TWITTER_KEY and TWITTER_SECRET environmental variables (can put these in `.env` file).
+Set `TWITTER_KEY` and `TWITTER_SECRET` environmental variables (can put these in `.env` file).
 
 You should also set SECRET_KEY environmental variable to random string.
 
