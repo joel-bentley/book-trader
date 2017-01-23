@@ -127,8 +127,8 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' in session:
-            return jsonify({'error': 'You must be logged in first.'})
-        return f(*args, **kwargs)
+            return f(*args, **kwargs)
+        return jsonify({'error': 'You must be logged in first.'})
     return decorated_function
 
 
