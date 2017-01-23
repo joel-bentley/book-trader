@@ -24,7 +24,8 @@ twitter = oauth.remote_app(name='twitter',
 
 @twitter.tokengetter
 def get_twitter_token(token=None):
-    user = User.query.filter_by(twitter_id=twitter_id).first()
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
     twitter_token = Token.query.filter_by(user=user, name='Twitter').first()
     return (twitter_token.oauth_token, twitter_token.oauth_token_secret)
 
