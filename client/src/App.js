@@ -73,7 +73,7 @@ class App extends React.Component {
     getBooks()
       .then(res => {
         const books = res.data.map(book => {
-          const image = `http://covers.openlibrary.org/b/olid/${book.olid}-M.jpg`;
+          const image = `https://covers.openlibrary.org/b/olid/${book.olid}-M.jpg`;
           return { ...book, image };
         });
         // console.dir({books})

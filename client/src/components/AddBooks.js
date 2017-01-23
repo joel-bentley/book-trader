@@ -24,7 +24,7 @@ const searchBooks = (searchText, method) => {
             subtitle: book.subtitle || null,
             author: book.author_name[0],
             olid: book.cover_edition_key,
-            image: `http://covers.openlibrary.org/b/olid/${book.cover_edition_key}-M.jpg`,
+            image: `https://covers.openlibrary.org/b/olid/${book.cover_edition_key}-M.jpg`,
           };
         });
     });
