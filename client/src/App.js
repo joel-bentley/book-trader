@@ -67,7 +67,7 @@ class App extends React.Component {
           this.setState({ userId, twitterName, fullName, avatar, location });
         }
       })
-      .catch(err => console.log('error:', err));
+      .catch(err => console.error('error:', err));
 
     getBooks()
       .then(res => {
@@ -78,7 +78,7 @@ class App extends React.Component {
         // console.dir({books})
         this.setState({ books });
       })
-      .catch(err => console.log('error:', err));
+      .catch(err => console.error('error:', err));
   };
 
   showAlert = message => {
@@ -101,7 +101,7 @@ class App extends React.Component {
         currentStateCopy,
         this.showAlert('Error while updating profile.')
       );
-      console.log('error:', err);
+      console.error('error:', err);
     });
   };
 
@@ -116,7 +116,7 @@ class App extends React.Component {
     };
     newBook = { ...newBook, ...moreProps };
 
-    console.log(newBook);
+    console.log({ newBook });
 
     this.setState(
       { books: [...books, newBook] },
@@ -130,7 +130,7 @@ class App extends React.Component {
         currentStateCopy,
         this.showAlert('Error while adding book')
       );
-      console.log('error:', err);
+      console.error('error:', err);
     });
   };
 
@@ -147,7 +147,7 @@ class App extends React.Component {
         currentStateCopy,
         this.showAlert('Error while removing book')
       );
-      console.log('error:', err);
+      console.error('error:', err);
     });
   };
 
@@ -179,7 +179,7 @@ class App extends React.Component {
           currentStateCopy,
           this.showAlert('Error while requesting book')
         );
-        console.log('error:', err);
+        console.error('error:', err);
       });
   };
 
@@ -208,7 +208,7 @@ class App extends React.Component {
         currentStateCopy,
         this.showAlert('Error while confirming book request.')
       );
-      console.log('error:', err);
+      console.error('error:', err);
     });
   };
 
@@ -239,7 +239,7 @@ class App extends React.Component {
         currentStateCopy,
         this.showAlert('Error while canceling book request.')
       );
-      console.log('error:', err);
+      console.error('error:', err);
     });
   };
 
@@ -262,7 +262,7 @@ class App extends React.Component {
         currentStateCopy,
         this.showAlert('Error while confirming book return.')
       );
-      console.log('error:', err);
+      console.error('error:', err);
     });
   };
 

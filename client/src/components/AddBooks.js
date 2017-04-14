@@ -51,7 +51,7 @@ class AddBooks extends React.Component {
       .then(searchResults => {
         this.setState({ searchTerm, searchResults, loading: false });
       })
-      .catch(err => console.log('error:', err));
+      .catch(err => console.error('error:', err));
   };
 
   handleSelect = eventKey => {
