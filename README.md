@@ -1,21 +1,9 @@
-#book-trader
-Built for Book Trading Club challenge on Free Code Camp.
+# book-trader
+App for lending books to friends
 
-(Python / Flask / OAuth / PostgreSQL / React / React Router)
+(React / Flask / OAuth / PostgreSQL)
 
 **Live Demo:** https://joel-bentley-book-trader.herokuapp.com/
-
----
-
-User story requirements for this project: (<https://www.freecodecamp.com/challenges/manage-a-book-trading-club>)
-
-1. As an unauthenticated user, I can view all books posted by every user.
-
-2. As an authenticated user, I can add a new book.
-
-3. As an authenticated user, I can update my settings to store my full name, city, and state.
-
-4. As an authenticated user, I can propose a trade and wait for the other user to accept the trade.
 
 ---
 
@@ -25,7 +13,7 @@ Set `TWITTER_KEY` and `TWITTER_SECRET` environmental variables (can put these in
 
 You should also set SECRET_KEY environmental variable to random string.
 
-Check variables in `.env` file and run file as script. 
+Check variables in `.env` file and run file as script.
 
 Create Python virtual environment in project folder with command `python -m venv env`.
 
