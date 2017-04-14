@@ -84,27 +84,20 @@ class AddBooks extends React.Component {
           onSubmit={this.handleSearchSubmit}
           buttonText="Search"
         />
-        {loading && (
-              <div className="text-center">
-                <br /><br /><br />
-                <h4>Loading...</h4>
-              </div>
-            )}
-        {searchTerm && (
-              <div>
-                <br /><br />
-                <h4>Search by {searchMethodText}: {searchTerm}</h4>
-                <br /><br />
-                {
-                  searchResults.length === 0
-                    ? <p>None found.</p>
-                    : <BookGrid
-                      books={searchResults}
-                      addBook={this.props.addBook}
-                    />
-                }
-              </div>
-            )}
+        {loading &&
+          <div className="text-center">
+            <br /><br /><br />
+            <h4>Loading...</h4>
+          </div>}
+        {searchTerm &&
+          <div>
+            <br /><br />
+            <h4>Search by {searchMethodText}: {searchTerm}</h4>
+            <br /><br />
+            {searchResults.length === 0
+              ? <p>None found.</p>
+              : <BookGrid books={searchResults} addBook={this.props.addBook} />}
+          </div>}
       </div>
     );
   }

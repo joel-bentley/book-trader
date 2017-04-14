@@ -4,9 +4,11 @@ import { Jumbotron } from 'react-bootstrap';
 const Intro = () => (
   <div>
     <Jumbotron
-      style={
-        { paddingTop: '5px', paddingBottom: '30px', backgroundColor: '#eee' }
-      }
+      style={{
+        paddingTop: '5px',
+        paddingBottom: '30px',
+        backgroundColor: '#eee',
+      }}
     >
       <h1>Book Trader</h1>
       <h3>An app for trading books with your friends</h3>

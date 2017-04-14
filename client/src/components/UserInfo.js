@@ -5,8 +5,8 @@ const UserInfo = ({ message, user }) => {
   const displayName = fullName || twitterName;
   const locationString = location.city
     ? location.state
-      ? ` in ${location.city}, ${location.state}`
-      : ` in ${location.city}`
+        ? ` in ${location.city}, ${location.state}`
+        : ` in ${location.city}`
     : location.state ? ` in ${location.state}` : '';
   return (
     <div>

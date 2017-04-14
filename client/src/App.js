@@ -30,8 +30,7 @@ const BOOK_ID_LENGTH = 5;
 const BOOK_ID_CHAR = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz123456789';
 
 const generateRandomId = (length, characters) => {
-  return Array
-    .from({ length })
+  return Array.from({ length })
     .map(() => characters[Math.floor(Math.random() * characters.length)])
     .join('');
 };
@@ -87,7 +86,7 @@ class App extends React.Component {
       console.log({ message });
       this.alertTimeoutId = setTimeout(
         () => this.setState({ alertMessage: '' }),
-        2000,
+        2000
       );
     });
   };
@@ -100,7 +99,7 @@ class App extends React.Component {
       //set back to previous value on error
       this.setState(
         currentStateCopy,
-        this.showAlert('Error while updating profile.'),
+        this.showAlert('Error while updating profile.')
       );
       console.log('error:', err);
     });
@@ -120,16 +119,16 @@ class App extends React.Component {
     console.log(newBook);
 
     this.setState(
-      { books: [ ...books, newBook ] },
+      { books: [...books, newBook] },
       this.showAlert(
-        `"${newBook.title}" by ${newBook.author} added to 'My Books'.`,
-      ),
+        `"${newBook.title}" by ${newBook.author} added to 'My Books'.`
+      )
     );
     postBook(newBook).catch(err => {
       //set back to previous value on error
       this.setState(
         currentStateCopy,
-        this.showAlert('Error while adding book'),
+        this.showAlert('Error while adding book')
       );
       console.log('error:', err);
     });
@@ -140,13 +139,13 @@ class App extends React.Component {
     const currentStateCopy = { ...{ books } };
     this.setState(
       { books: this.state.books.filter(b => b.bookId !== book.bookId) },
-      this.showAlert(`"${book.title}" by ${book.author} removed.`),
+      this.showAlert(`"${book.title}" by ${book.author} removed.`)
     );
     deleteBook(book.bookId).catch(err => {
       //set back to previous value on error
       this.setState(
         currentStateCopy,
-        this.showAlert('Error while removing book'),
+        this.showAlert('Error while removing book')
       );
       console.log('error:', err);
     });
@@ -161,7 +160,7 @@ class App extends React.Component {
       .then(() => {
         const newBooks = books.map(b => {
           const userAlreadyRequested = b.requestedBy.filter(
-            r => r.userId === userId,
+            r => r.userId === userId
           ).length;
 
           if (b.bookId === book.bookId && !userAlreadyRequested) {
@@ -171,14 +170,14 @@ class App extends React.Component {
         });
         this.setState(
           { books: newBooks },
-          this.showAlert(`"${book.title}" by ${book.author} requested.`),
+          this.showAlert(`"${book.title}" by ${book.author} requested.`)
         );
       })
       .catch(err => {
         //set back to previous value on error
         this.setState(
           currentStateCopy,
-          this.showAlert('Error while requesting book'),
+          this.showAlert('Error while requesting book')
         );
         console.log('error:', err);
       });
@@ -192,7 +191,7 @@ class App extends React.Component {
     const newBooks = books.map(b => {
       if (
         b.bookId === book.bookId &&
-          b.requestedBy.filter(r => r.userId === requester.userId).length
+        b.requestedBy.filter(r => r.userId === requester.userId).length
       ) {
         b.lentTo = requester;
         b.requestedBy = [];
@@ -201,13 +200,13 @@ class App extends React.Component {
     });
     this.setState(
       { books: newBooks },
-      this.showAlert(`"${book.title}" by ${book.author} request confirmed.`),
+      this.showAlert(`"${book.title}" by ${book.author} request confirmed.`)
     );
     postConfirmRequest(book.bookId, requester.userId).catch(err => {
       //set back to previous value on error
       this.setState(
         currentStateCopy,
-        this.showAlert('Error while confirming book request.'),
+        this.showAlert('Error while confirming book request.')
       );
       console.log('error:', err);
     });
@@ -224,7 +223,7 @@ class App extends React.Component {
     const newBooks = books.map(b => {
       if (
         b.bookId === book.bookId &&
-          b.requestedBy.filter(r => r.userId === requesterId).length
+        b.requestedBy.filter(r => r.userId === requesterId).length
       ) {
         b.requestedBy = b.requestedBy.filter(r => r.userId !== requesterId);
       }
@@ -232,13 +231,13 @@ class App extends React.Component {
     });
     this.setState(
       { books: newBooks },
-      this.showAlert(`"${book.title}" by ${book.author} request canceled.`),
+      this.showAlert(`"${book.title}" by ${book.author} request canceled.`)
     );
     postCancelRequest(book.bookId, requesterId).catch(err => {
       //set back to previous value on error
       this.setState(
         currentStateCopy,
-        this.showAlert('Error while canceling book request.'),
+        this.showAlert('Error while canceling book request.')
       );
       console.log('error:', err);
     });
@@ -255,13 +254,13 @@ class App extends React.Component {
     });
     this.setState(
       { books: newBooks },
-      this.showAlert(`"${book.title}" by ${book.author} return confirmed.`),
+      this.showAlert(`"${book.title}" by ${book.author} return confirmed.`)
     );
     postReturn(book.bookId).catch(err => {
       //set back to previous value on error
       this.setState(
         currentStateCopy,
-        this.showAlert('Error while confirming book return.'),
+        this.showAlert('Error while confirming book return.')
       );
       console.log('error:', err);
     });
@@ -283,9 +282,9 @@ class App extends React.Component {
     const isAuthenticated = twitterName !== '';
 
     const myBooks = books.filter(b => b.owner.userId === userId);
-    const numRequests = myBooks.length ? myBooks
-        .map(b => b.requestedBy.length)
-        .reduce((a, b) => a + b) : 0;
+    const numRequests = myBooks.length
+      ? myBooks.map(b => b.requestedBy.length).reduce((a, b) => a + b)
+      : 0;
 
     return (
       <div className="App">
@@ -293,149 +292,154 @@ class App extends React.Component {
           {...{ router, isAuthenticated, displayName, avatar, numRequests }}
         />
         <div className="container">
-          {isAuthenticated && (
-                <div>
-                  {alertMessage ? <Alert bsStyle="success">
-                        <strong>{alertMessage}</strong>
-                      </Alert> : <div style={{ height: '48px' }} />}
-                </div>
-              )}
+          {isAuthenticated &&
+            <div>
+              {alertMessage
+                ? <Alert bsStyle="success">
+                    <strong>{alertMessage}</strong>
+                  </Alert>
+                : <div style={{ height: '48px' }} />}
+            </div>}
           <Match
             exactly
             pattern="/"
             render={() => {
-                const availableBooks = books
-                  .filter(b => !b.lentTo)
-                  .filter(b => b.owner.userId !== userId);
+              const availableBooks = books
+                .filter(b => !b.lentTo)
+                .filter(b => b.owner.userId !== userId);
 
-                return (
-                  <div>
-                    {!isAuthenticated && <Intro />}
-                    {availableBooks.length === 0 ? <div className="text-center">
-                          <br />
-                          <p>
-                            Sorry, no books are currently available for you to borrow.
-                          </p>
-                          <p>Ask your friends to join and add their books!</p>
-                        </div> : <div>
-                          <h3>Books currently available</h3>
-                          <br />
-                          <BookGrid
-                            books={availableBooks}
-                            requestBook={this.requestBook}
-                            cancelRequest={this.cancelRequest}
-                            {...{ isAuthenticated, userId }}
-                          />
-                        </div>}
-                  </div>
-                );
-              }}
+              return (
+                <div>
+                  {!isAuthenticated && <Intro />}
+                  {availableBooks.length === 0
+                    ? <div className="text-center">
+                        <br />
+                        <p>
+                          Sorry, no books are currently available for you to borrow.
+                        </p>
+                        <p>Ask your friends to join and add their books!</p>
+                      </div>
+                    : <div>
+                        <h3>Books currently available</h3>
+                        <br />
+                        <BookGrid
+                          books={availableBooks}
+                          requestBook={this.requestBook}
+                          cancelRequest={this.cancelRequest}
+                          {...{ isAuthenticated, userId }}
+                        />
+                      </div>}
+                </div>
+              );
+            }}
           />
           <MatchWhenAuthorized
             pattern="/mybooks"
             {...{ isAuthenticated }}
             render={() => {
-                const myUnlentBooks = myBooks.filter(b => !b.lentTo);
-                const myLentBooks = myBooks.filter(b => b.lentTo);
-                const requestedBooks = books.filter(
-                  b => b.requestedBy.filter(r => r.userId === userId).length,
-                );
-                const booksBorrowed = books.filter(
-                  b => b.lentTo && b.lentTo.userId === userId,
-                );
+              const myUnlentBooks = myBooks.filter(b => !b.lentTo);
+              const myLentBooks = myBooks.filter(b => b.lentTo);
+              const requestedBooks = books.filter(
+                b => b.requestedBy.filter(r => r.userId === userId).length
+              );
+              const booksBorrowed = books.filter(
+                b => b.lentTo && b.lentTo.userId === userId
+              );
 
-                return (
-                  <div>
-                    <h3>My Books (On Shelf)</h3>
-                    <br />
-                    {myUnlentBooks.length === 0 ? <div className="text-center">
-                          <p>No books here</p>
-                        </div> : <BookGrid
-                          books={myUnlentBooks}
-                          removeBook={this.removeBook}
-                        />}
-                    <hr />
-                    <h3>Books I have Borrowed</h3>
-                    <br />
-                    {booksBorrowed.length === 0 ? <div className="text-center">
-                          <p>No books here</p>
-                        </div> : <BookGrid books={booksBorrowed} />}
-                    <hr />
-                    <h3>My Books (Lent Out)</h3>
-                    <br />
-                    {myLentBooks.length === 0 ? <div className="text-center">
-                          <p>No books here</p>
-                        </div> : <BookGrid
-                          books={myLentBooks}
-                          confirmReturn={this.confirmReturn}
-                        />}
-                    <hr />
-                    <h3>Books I have Requested</h3>
-                    <br />
-                    {requestedBooks.length === 0 ? <div className="text-center">
-                          <p>No books here</p>
-                        </div> : <BookGrid
-                          books={requestedBooks}
-                          cancelRequest={this.cancelRequest}
-                          {...{ userId }}
-                        />}
-                  </div>
-                );
-              }}
+              return (
+                <div>
+                  <h3>My Books (On Shelf)</h3>
+                  <br />
+                  {myUnlentBooks.length === 0
+                    ? <div className="text-center">
+                        <p>No books here</p>
+                      </div>
+                    : <BookGrid
+                        books={myUnlentBooks}
+                        removeBook={this.removeBook}
+                      />}
+                  <hr />
+                  <h3>Books I have Borrowed</h3>
+                  <br />
+                  {booksBorrowed.length === 0
+                    ? <div className="text-center">
+                        <p>No books here</p>
+                      </div>
+                    : <BookGrid books={booksBorrowed} />}
+                  <hr />
+                  <h3>My Books (Lent Out)</h3>
+                  <br />
+                  {myLentBooks.length === 0
+                    ? <div className="text-center">
+                        <p>No books here</p>
+                      </div>
+                    : <BookGrid
+                        books={myLentBooks}
+                        confirmReturn={this.confirmReturn}
+                      />}
+                  <hr />
+                  <h3>Books I have Requested</h3>
+                  <br />
+                  {requestedBooks.length === 0
+                    ? <div className="text-center">
+                        <p>No books here</p>
+                      </div>
+                    : <BookGrid
+                        books={requestedBooks}
+                        cancelRequest={this.cancelRequest}
+                        {...{ userId }}
+                      />}
+                </div>
+              );
+            }}
           />
           <MatchWhenAuthorized
             pattern="/addbooks"
             {...{ isAuthenticated }}
             render={() => {
-                return <AddBooks addBook={this.addBook} />;
-              }}
+              return <AddBooks addBook={this.addBook} />;
+            }}
           />
           <MatchWhenAuthorized
             pattern="/requests"
             {...{ isAuthenticated }}
             render={() => {
-                const myBooksRequested = flatten(
-                  myBooks
-                    .filter(b => b.requestedBy.length > 0)
-                    .map(b => {
-                      return b.requestedBy.map(r => {
-                        return { ...b, requestedBy: [ r ] };
-                      });
-                    }),
-                );
+              const myBooksRequested = flatten(
+                myBooks.filter(b => b.requestedBy.length > 0).map(b => {
+                  return b.requestedBy.map(r => {
+                    return { ...b, requestedBy: [r] };
+                  });
+                })
+              );
 
-                return (
-                  <div>
-                    <h3>Click on books to confirm requests</h3>
-                    <br />
-                    {
-                      myBooksRequested.length === 0
-                        ? <div className="text-center">
-                          <p>No books here</p>
-                        </div>
-                        : <BookGrid
-                          books={myBooksRequested}
-                          confirmRequest={this.confirmRequest}
-                          cancelRequest={this.cancelRequest}
-                          {...{ userId }}
-                        />
-                    }
-                  </div>
-                );
-              }}
+              return (
+                <div>
+                  <h3>Click on books to confirm requests</h3>
+                  <br />
+                  {myBooksRequested.length === 0
+                    ? <div className="text-center">
+                        <p>No books here</p>
+                      </div>
+                    : <BookGrid
+                        books={myBooksRequested}
+                        confirmRequest={this.confirmRequest}
+                        cancelRequest={this.cancelRequest}
+                        {...{ userId }}
+                      />}
+                </div>
+              );
+            }}
           />
           <MatchWhenAuthorized
             pattern="/profile"
             {...{ isAuthenticated }}
-            render={
-              () => (
-                <Profile
-                  updateProfile={this.updateProfile}
-                  {...{ twitterName, avatar, fullName, location }}
-                  profileUpdate={this.profileUpdate}
-                />
-              )
-            }
+            render={() => (
+              <Profile
+                updateProfile={this.updateProfile}
+                {...{ twitterName, avatar, fullName, location }}
+                profileUpdate={this.profileUpdate}
+              />
+            )}
           />
           <Match
             pattern="/login"

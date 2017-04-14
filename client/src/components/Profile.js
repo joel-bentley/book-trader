@@ -27,15 +27,14 @@ class Profile extends React.Component {
         <h4>Twitter:</h4>
         <p>{twitterName}</p>
         <h4>Full Name:</h4>
-        {
-          fullNameInput
-            ? <ControlledInput
+        {fullNameInput
+          ? <ControlledInput
               placeholder=""
               onSubmit={newFullName => profileUpdate({ fullName: newFullName })}
               inputValue={fullName}
               buttonText="Enter"
             />
-            : <p>
+          : <p>
               {fullName}
               <Glyphicon
                 glyph="pencil"
@@ -43,23 +42,19 @@ class Profile extends React.Component {
                 onClick={() => this.setState({ fullNameInput: true })}
                 className="edit-icon"
               />
-            </p>
-        }
+            </p>}
         <h4>City:</h4>
-        {
-          cityInput
-            ? <ControlledInput
+        {cityInput
+          ? <ControlledInput
               placeholder=""
-              onSubmit={
-                newCity =>
-                  profileUpdate({
-                    location: { city: newCity, state: location.state },
-                  })
-              }
+              onSubmit={newCity =>
+                profileUpdate({
+                  location: { city: newCity, state: location.state },
+                })}
               inputValue={location.city}
               buttonText="Enter"
             />
-            : <p>
+          : <p>
               {location.city}
               <Glyphicon
                 glyph="pencil"
@@ -67,23 +62,19 @@ class Profile extends React.Component {
                 onClick={() => this.setState({ cityInput: true })}
                 className="edit-icon"
               />
-            </p>
-        }
+            </p>}
         <h4>State:</h4>
-        {
-          stateInput
-            ? <ControlledInput
+        {stateInput
+          ? <ControlledInput
               placeholder=""
-              onSubmit={
-                newState =>
-                  profileUpdate({
-                    location: { city: location.city, state: newState },
-                  })
-              }
+              onSubmit={newState =>
+                profileUpdate({
+                  location: { city: location.city, state: newState },
+                })}
               inputValue={location.state}
               buttonText="Enter"
             />
-            : <p>
+          : <p>
               {location.state}
               <Glyphicon
                 glyph="pencil"
@@ -91,8 +82,7 @@ class Profile extends React.Component {
                 onClick={() => this.setState({ stateInput: true })}
                 className="edit-icon"
               />
-            </p>
-        }
+            </p>}
       </Col>
     );
   }
