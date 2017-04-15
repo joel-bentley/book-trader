@@ -1,5 +1,6 @@
 import React from 'react';
-import { Match, Redirect } from 'react-router';
+import Match from 'react-router/Match';
+import Redirect from 'react-router/Redirect';
 
 const MatchWhenAuthorized = (
   { render: Component, isAuthenticated, ...rest }

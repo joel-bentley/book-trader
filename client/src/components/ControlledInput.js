@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button, FormControl, InputGroup } from 'react-bootstrap';
+import Button from 'react-bootstrap/lib/Button';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import InputGroup from 'react-bootstrap/lib/InputGroup';
 
 class ControlledInput extends React.Component {
   state = { inputValue: '' };

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Match } from 'react-router';
-import { Alert } from 'react-bootstrap';
+import Match from 'react-router/Match';
+import Alert from 'react-bootstrap/lib/Alert';
 import MatchWhenAuthorized from './components/MatchWhenAuthorized';
 import axios from 'axios';
 

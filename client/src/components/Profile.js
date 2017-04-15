@@ -1,5 +1,6 @@
 import React from 'react';
-import { Col, Glyphicon } from 'react-bootstrap';
+import Col from 'react-bootstrap/lib/Col';
+import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 
 import ControlledInput from './ControlledInput';
 import './Profile.css';

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Redirect } from 'react-router';
-import { Button } from 'react-bootstrap';
+import Redirect from 'react-router/Redirect';
+import Button from 'react-bootstrap/lib/Button';
 
 import './Login.css';
 

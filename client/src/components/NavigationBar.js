@@ -1,13 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router';
-import {
-  Glyphicon,
-  Navbar,
-  NavDropdown,
-  MenuItem,
-  Nav,
-  NavItem,
-} from 'react-bootstrap';
+import Link from 'react-router/Link';
+import Glyphicon from 'react-bootstrap/lib/Glyphicon';
+import Navbar from 'react-bootstrap/lib/Navbar';
+import NavDropdown from 'react-bootstrap/lib/NavDropdown';
+import MenuItem from 'react-bootstrap/lib/MenuItem';
+import Nav from 'react-bootstrap/lib/Nav';
+import NavItem from 'react-bootstrap/lib/NavItem';
 
 class NavigationBar extends React.Component {
   state = { expanded: false };
