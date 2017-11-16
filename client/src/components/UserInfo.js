@@ -5,8 +5,8 @@ const UserInfo = ({ message, user }) => {
   const displayName = fullName || twitterName;
   const locationString = location.city
     ? location.state
-        ? ` in ${location.city}, ${location.state}`
-        : ` in ${location.city}`
+      ? ` in ${location.city}, ${location.state}`
+      : ` in ${location.city}`
     : location.state ? ` in ${location.state}` : '';
   return (
     <div>
@@ -14,9 +14,11 @@ const UserInfo = ({ message, user }) => {
         src={`https://twitter.com/${twitterName}/profile_image?size=normal`}
         role="presentation"
       />
-      <br /><br />
+      <br />
+      <br />
       {`${message} ${displayName}${locationString}`}.
-      <br /><br />
+      <br />
+      <br />
     </div>
   );
 };

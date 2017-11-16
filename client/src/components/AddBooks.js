@@ -15,9 +15,11 @@ const searchBooks = (searchText, method) => {
     .then(res => {
       return res.data.docs
         .filter(book => {
-          return book.hasOwnProperty('title') &&
+          return (
+            book.hasOwnProperty('title') &&
             book.hasOwnProperty('author_name') &&
-            book.hasOwnProperty('cover_edition_key');
+            book.hasOwnProperty('cover_edition_key')
+          );
         })
         .map(book => {
           return {
@@ -85,20 +87,30 @@ class AddBooks extends React.Component {
           onSubmit={this.handleSearchSubmit}
           buttonText="Search"
         />
-        {loading &&
+        {loading && (
           <div className="text-center">
-            <br /><br /><br />
+            <br />
+            <br />
+            <br />
             <h4>Loading...</h4>
-          </div>}
-        {searchTerm &&
+          </div>
+        )}
+        {searchTerm && (
           <div>
-            <br /><br />
-            <h4>Search by {searchMethodText}: {searchTerm}</h4>
-            <br /><br />
-            {searchResults.length === 0
-              ? <p>None found.</p>
-              : <BookGrid books={searchResults} addBook={this.props.addBook} />}
-          </div>}
+            <br />
+            <br />
+            <h4>
+              Search by {searchMethodText}: {searchTerm}
+            </h4>
+            <br />
+            <br />
+            {searchResults.length === 0 ? (
+              <p>None found.</p>
+            ) : (
+              <BookGrid books={searchResults} addBook={this.props.addBook} />
+            )}
+          </div>
+        )}
       </div>
     );
   }
